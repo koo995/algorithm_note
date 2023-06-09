@@ -67,8 +67,9 @@ def solution(array):
     
 
 
-# result = solution(["bool", "float", "int", "bool", "short", "float", "bool", "bool", "long"])
-result = solution(["int", "short", "float", "int", "bool"])
+result = solution(["bool", "float", "int", "bool", "short", "float", "bool", "bool", "long"])
+# result = solution(["int", "short", "float", "int", "bool"])
+# result = solution(["bool", "long", "short", "long", "bool", "long", "bool", "long", "short", "long", "long"])
 print(result)
 
 # 괜히 enum이나 이런거 쓸려해서 어렵게 가는 것이였나...
