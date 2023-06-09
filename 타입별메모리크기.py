@@ -1,79 +1,85 @@
-import sys
-from enum import Enum
-input = sys.stdin.readline
-array = list(input().split())
-
-MAX_MEMORY_TABLE_SIZE = 128
-MAX_UNIT_MEMORY_SIZE = 8
-MEMORY_TABLE = [[] for _ in range(16)]
-UNIT_MEMORY = []
-
-class Type(Enum):
-    BOOL = (1, "#")
-    SHORT = (2, "##")
-    FLOAT = (4, "####")
-    INT = (8, "########")
-    LONG = (16, "################")
-
-    def __init__(self, size, hash):
-        self.size = size
-        self.hash = hash
+def solution(array):
+    type_size = {"bool": 1, "short": 2, "float": 4, "int": 8, "long": 16} 
+    result = ''
+    current_block = 0 # 이 녀석이 인덱스 역할을 해줄거야.
+    block_table = [[""] for _ in range(16)]
     
-    @property
-    def type_list():
-        return [member for _, member in Type.__members__.items()]
-
-
-def allocate_memory(type):
-    global MEMORY_TABLE
-    for unit_memory in MEMORY_TABLE:
-        if len(unit_memory) > UNIT_MEMORY_SIZE:
-            continue
-
-def check_unit_memory():
-    global UNIT_MEMORY
-    sum = 0
-    for type in UNIT_MEMORY:
-        sum += type.size
-    return sum
-
-def to_icon(unit_mem: list):
-    str = ""
-    for t in unit_mem:
-        str += t.hash
-        if t.name != "BOOL":
-            str += "."
-        
-    str += type.hash
-    return 0
-    
-
-def allocate_unit_memory(type: Type):
-    global UNIT_MEMORY
-
-    UNIT_MEMORY.append(type)
-    result = check_unit_memory() # 유닛 메모리에 현재 차있는 정도
-    if result > MAX_UNIT_MEMORY_SIZE:
-        temp = UNIT_MEMORY.pop() # 타입 하나더 추가했는데 크기가 8을 초과한다면 마지막에 넣은것을 빼버린다. 그후 남은 녀석들로 처리. 뺀 녀석은 따로 보관
-        str = to_icon(UNIT_MEMORY) # 샵으로 구성된 문자열을 받는다
-        # 마지막에 뺏던것을 다음메모리로 새롭게 넣어준다.
-        UNIT_MEMORY.clear()
-        UNIT_MEMORY.append(temp)
-        allocate_memory(str) # 하나의 메모리에 해당하는 만큼 채워준다.
-        
-    
-    
-
-def function(array):
     for type in array:
-        # 일치하는 타입을 찾아 유닛메모리에 할당
-        for member in Type.type_list:
-            if type == member.name:
-                allocate_unit_memory(member)
-        if unit_memory > MAX_UNIT_MEMORY_SIZE:
+        if type_size[type] < 8:
+            if len(block_table[current_block][0]) >= 8 : # 여기서 나머지가 0인 경우로 하니까 제일 처음 0인 경우도 0이니까 index 1부터 채워지네... 
+                # 하나의 메모리가 가득 찼다면, 다음 메모리에 넣어야 겠지?
+                current_block += 1 
+                # 가득찬 후 새로운 block에 넣을때는 앞에서 부터 넣으니까 패딩이 필요없겠군
+                block_table[current_block][0] += "#" * type_size[type]
+            else : # 우선 하나의 단위 메모리가 가득 차지 않았다면 이후 추가해 준다. 패딩을 고려해야 한다.
+                if type == "bool":
+                    block_table[current_block][0] += "#"
+                if type == "short":
+                    # short을 넣었을때 8을 넘는 경우가 있을 수 있지 그것을 먼저 고려하자
+                    if len(block_table[current_block][0]) + type_size[type] > 8:
+                        current_block += 1
+                    # 만약에 2배수가 아니라면 패딩을 넣어야 겠지? 얼만큼? 그냥 하나만 넣으면 어떤 상황이건 되지 않나?
+                    if len(block_table[current_block][0]) % 2 != 0:
+                        block_table[current_block][0] += "."
+                    block_table[current_block][0] += "#" * type_size[type]
+                if type == "float":
+                    if len(block_table[current_block][0]) + type_size[type] > 8:
+                        current_block += 1
+                    # 만약에 4배수가 아니라면 패딩을 추가해 줘야지
+                    if len(block_table[current_block][0]) % 4 != 0:
+                        padding = 4 - len(block_table[current_block][0]) % 4
+                        block_table[current_block][0] += "." * padding
+                    block_table[current_block][0] += "#" * type_size[type]
                 
+        else: # type의 크기가 8또는 16인 경우야.
+            # 블락이 가득찼다면 그냥 8개씩 hash을 채워준다.
+            if len(block_table[current_block][0]) >= 8:
+                current_block += 1
+                block_table[current_block][0] += "#" * 8
+                # long타입이라면 한번더 채워줘야 되지
+                if type == "long":
+                    current_block += 1
+                    block_table[current_block][0] += "#" * 8
+            # block이 가득차지 않았다면, 먼저 넣어줘야 하는데... 넣었을 경우 사이즈 초과가 발생해 그러면 패딩을 고려하여 block을 채우고 다음 블락에 넣어줘야 겠군
+            else:
+                if len(block_table[current_block][0]) + type_size[type] > 8: # 넣었을때 사이즈가 초과한다면
+                    # 그렇다면 패딩은 얼만큼? 8- 나머지만큼
+                    padding = 8 - len(block_table[current_block][0]) % 8
+                    block_table[current_block][0] += "." * padding
+                    # 패딩을 다 채워주었다면 위랑 같네
+                    current_block += 1
+                    block_table[current_block][0] += "#" * 8
+                    # long타입이라면 한번더 채워줘야 되지
+                    if type == "long":
+                        current_block += 1
+                        block_table[current_block][0] += "#" * 8
+                else: # 초과가 발생하지 않는 다는 것은 처음인 경우겟군
+                    block_table[current_block][0] += "#" * 8
 
+                    
+    return block_table
+    # count = 0
+    # for block in block_table:
+    #     count += 1
+    #     if count > 16:
+    #         return "HALT"
+    #     result += block[0] # block의 모양은 ["###....."] 이런 모양이니까 index 0추가
+    #     result
 
-# 우선 들어온 type을 체크하여 8바이트까지의 기준을 정해야 한다.
-# 어디까지 단위 메모리에 담을지 기준을 정해야하지 않을까?
-# 하나하나 차근차근 가보자구...
+result = solution(["bool", "float", "int", "bool", "short", "float", "bool", "bool", "long"])
+print(result)
+
+# 괜히 enum이나 이런거 쓸려해서 어렵게 가는 것이였나...
+# 이런 문제는 딕셔너리를 쓰는게 유용해 보이네... 사실 평상시에 딕셔너리를 잘 안써봐서 덜 익숙한듯...
+
+# table 안에 모양이 완전 이상하게 들어가 있네... ['#', '#', '#', '#', '#', '#', '#', '#']이런 모양이라니...
+# 처음부터 string에다 str += "#" *5 하면 "#####"이 될텐데
+# 하나의 list인 []안에다가 "#" * 5를 하니까 ["#", ...."] 이렇게 되는구나
+# 그렇다면 내가 원하는 ["#####"] 이렇게 저장될려면 어케하지?
+# 방법은... index0을 사용하여 미리 정의한 str을 뽑아오기, 또 다른 변수를 만들어서 8개가 되면 추가하기?
+# 아니면 list에 있는 모든 요소를 합하는? join이 있긴한데... 시간제한 때문에 써도 될지 모르겟다
+
+# 또 왜 처음 index는 아무것도 안채워지지? 나머지가 0인 경우로 처리해서 그렇구나 0을 무언가로 나눌때 나머지가 0이니
+# 그렇다면 사이즈가 큰 경우로 하면? 처음이 모조리 padding으로 채워지네 ㅅㅂ 이런 경우는 뭘로 해야하지
+# 넣었을떼 초과하냐 안하냐로 처리했음. 사실 되게 기본적으로 따질 문제인가
+# 근데 너무 if 와 else가 난잡한데... 함수들로 분리하는게 나았을려나...
