@@ -32,13 +32,13 @@ class Game:
         print("===========================")
         print(f"     ROUND {round} - START")
         print("===========================")
-        play_list: list[Player] = self.set_play_order(round, you, computers)
+        play_order: list[Player] = self.set_play_order(round, you, computers)
         # deck을 생성
         card_deck = [random.randint(1, 13) for _ in range(30)]
         # print(" 만들어진 deck: ", card_deck)
-        print(f"게임은 {', '.join(str(player) for player in play_list)} 순으로 진행됩니다.\n")
-        self.play_game(play_list, card_deck)
-        self.round_result(round, play_list)
+        print(f"게임은 {', '.join(str(player) for player in play_order)} 순으로 진행됩니다.\n")
+        self.play_game(play_order, card_deck)
+        self.round_result(round, play_order)
     
     def set_play_order(self, round, you:Player, computers: list[Player]): # 첫라운드는 이름순, 그 후는 점수가 낮은 순서대로 카드를 뽑는다.
         players = [*computers] # 언패킹후 다시 리스트로 감싸준다.
@@ -50,16 +50,16 @@ class Game:
             score_order = sorted(players, key=lambda x:x.score, reverse=True)
             return score_order
     
-    def play_game(self, play_list:list[Player], deck): # 각 플레이어가 카드를 가지고. 게임을 시작한다
+    def play_game(self, play_order:list[Player], deck): # 각 플레이어가 카드를 가지고. 게임을 시작한다
         # 먼저 플레이어들에게 card을 줘야겠어
         print("===========플레이어가 뽑은 카드============")
-        for player in play_list:
+        for player in play_order:
             player.select_card(deck)
             # print(" 현재 deck 상태:", deck)
             print(f">> {player.name}  (현재 점수: {player.score})")
             print(f">> 뽑은 카드: {player.card} \n")
-        winners = self.get_winners(play_list)
-        self.set_score(winners, play_list)
+        winners = self.get_winners(play_order)
+        self.set_score(winners, play_order)
         
     def set_score(self, winners:list[Player], players:list[Player]):
         max_card = winners[0].card
