@@ -1,4 +1,6 @@
 directions = ["E","W","N","S"]
+move_x = [1, -1, 0, 0]
+move_y = [0, 0, -1, 1]
 def solution(park, routes):
     pos = []
     # start 지점을 찾았다.
@@ -9,73 +11,34 @@ def solution(park, routes):
     print("시작위치",pos)
     # 명령을 처리하자
     for order in routes :
-        direction, dist = order.split() 
+        direct, dist = order.split() 
         dist = int(dist)
-        if direction == "E":
-            next_pos = [None, None]
-            go_check = False
-            for i in range(1,dist+1):
-                next_pos = [pos[0], pos[1] + i]
-                if next_pos[1] >= 0 and next_pos[1] < len(park[0]) and park[next_pos[0]][next_pos[1]] == "O":
+        next_pos = [None, None]
+        go_check = False
+        
+        for i, d in enumerate(directions):
+            # 특정 방향을 찾으면 그에 맞는 조건을 따져 본다.
+            if d == direct:
+                for m in range(1, dist+1):
+                    n_x = pos[1] + move_x[i] * m
+                    n_y = pos[0] + move_y[i] * m
+                    next_pos = [n_y, n_x]
+                    # next_pos가 park 안에 있다는 것을 어떻게 정의하지?
+                    if n_y >= 0 \
+                        and n_y < len(park) \
+                        and n_x >= 0 \
+                        and n_x < len(park[0]) \
+                        and park[n_y][n_x] == "O":
                         go_check = True
-                else: 
-                    go_check = False
-                    break
-            if go_check == True: # 언제 go_check을 True로 해줄것이냐? 
-                # 모든 이동에 대해서 ok일때 인데... 모든 이동에 대해서 ok는 어떻게 처리할까?
-                pos = next_pos
-                print("현재위치: ", pos)
-        if direction == "W":
-            next_pos = [None, None]
-            go_check = False
-            for i in range(1,dist+1):
-                next_pos = [pos[0], pos[1] - i]
-                if next_pos[1] >= 0 and next_pos[1] < len(park[0]) and park[next_pos[0]][next_pos[1]] == "O":
-                        go_check = True
-                else: 
-                    go_check = False
-                    break
-            if go_check == True: # 언제 go_check을 True로 해줄것이냐? 
-                # 모든 이동에 대해서 ok일때 인데... 모든 이동에 대해서 ok는 어떻게 처리할까?
-                pos = next_pos
-                print("현재위치: ", pos)
-
-        if direction == "S":
-            next_pos = [None, None]
-            go_check = False
-            for i in range(1,dist+1):
-                next_pos = [pos[0] + i, pos[1]]
-                if next_pos[0] >= 0 and next_pos[0] < len(park) and park[next_pos[0]][next_pos[1]] == "O":
-                        go_check = True
-                else: 
-                    go_check = False
-                    break
-            if go_check == True: # 언제 go_check을 True로 해줄것이냐? 
-                # 모든 이동에 대해서 ok일때 인데... 모든 이동에 대해서 ok는 어떻게 처리할까?
-                pos = next_pos
-                print("현재위치: ", pos)
-
-        if direction == "N":
-            next_pos = [None, None]
-            go_check = False
-            for i in range(1,dist+1):
-                next_pos = [pos[0] - i , pos[1]]
-                if next_pos[0] >= 0 and next_pos[0] < len(park) and park[next_pos[0]][next_pos[1]] == "O":
-                        go_check = True
-                else:
-                    go_check = False
-                    break
-            if go_check == True: # 언제 go_check을 True로 해줄것이냐? 
-                # 모든 이동에 대해서 ok일때 인데... 모든 이동에 대해서 ok는 어떻게 처리할까?
-                pos = next_pos
-                print("현재위치: ", pos)
+                    else:
+                        go_check = False
+                        break
+        if go_check == True:
+            pos = next_pos
+            print("현재 위치: ", pos)
 
     answer = pos
     return answer
-
-
-            
-    
     
 # 시간 복잡도를 고려하지 않기가 어렵네
 # start 지점을 어떻게 특정하지?
