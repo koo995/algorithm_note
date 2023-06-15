@@ -8,11 +8,11 @@ def solution(sequence, k):
         print("window: ", window)
         sum = _sum(sequence, window, k)
         if sum == k:
-            subs.append(window)
+            w = [s, e]
+            subs.append(w)
             print(subs)
             s = e
             window[0] = s
-            continue
         if sum > k:
             s += 1
             window[0] = s
