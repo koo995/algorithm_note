@@ -2,11 +2,17 @@ def solution(sequence, k):
     subs = [] # 후보가 되는 녀석들을 여기다 집어넣는다 분류는 key= len 그중에서 첫 index가 제일 작은녀석
     window = [0,0]
     sum = 0
+    seq_table = []
+    seq_table.append(sequence[0])
+    for s in sequence[1:]:
+        seq_table.append(s+seq_table[-1])     
+    print(seq_table)
+    
     while (window[1] <= len(sequence) and window[0] != len(sequence)):
         s = window[0]
         e = window[1]
         print("window: ", window)
-        sum = _sum(sequence, window, k)
+        sum = _sum(seq_table, window)
         if sum == k:
             w = [s, e]
             subs.append(w)
@@ -21,17 +27,13 @@ def solution(sequence, k):
             e += 1
             window[1]= e
     sorted_subs = sorted(subs, key = lambda x:x[1]-x[0])
-    print(sorted_subs)
+    # print(sorted_subs)
     return sorted_subs[0]
 
-def _sum(sequence, window, k):
-    result = 0
-    for i in sequence[window[0]:window[1]+1]:
-        result += i
-    return result
+def _sum(seq_table, window):
+    return (seq_table[window[1]] - seq_table[window[0]-1]) if window[0] > 0 else seq_table[window[1]]
     
-    
-
+solution([1,2,3,4,5], 7)
 
 
 # 비내림차순?
