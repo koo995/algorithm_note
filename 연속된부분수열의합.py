@@ -11,8 +11,8 @@ def solution(sequence, k):
             w = [s, e]
             subs.append(w)
             print(subs)
-            s = e
-            window[0] = s
+            window[0] = s+1
+            window[1] = e+1
         if sum > k:
             s += 1
             window[0] = s
@@ -20,8 +20,9 @@ def solution(sequence, k):
         if sum < k:
             e += 1
             window[1]= e
-        
-    # return subs[0]
+    sorted_subs = sorted(subs, key = lambda x:x[1]-x[0])
+    print(sorted_subs)
+    return sorted_subs[0]
 
 def _sum(sequence, window, k):
     result = 0
