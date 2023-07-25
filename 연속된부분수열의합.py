@@ -1,37 +1,24 @@
 def solution(sequence, k):
-    subs = [] # 후보가 되는 녀석들을 여기다 집어넣는다 분류는 key= len 그중에서 첫 index가 제일 작은녀석
-    window = [0,0]
-    sum = 0
-    seq_table = []
-    seq_table.append(sequence[0])
+    sum_table = []
+    results = []
+    sum_table.append(sequence[0]) # 0인덱스는 seq[0]과 일치할 것이다.
     for s in sequence[1:]:
-        seq_table.append(s+seq_table[-1])     
-    print(seq_table)
-    
-    while (window[1] <= len(sequence) and window[0] != len(sequence)):
-        s = window[0]
-        e = window[1]
-        print("window: ", window)
-        sum = _sum(seq_table, window)
-        if sum == k:
-            w = [s, e]
-            subs.append(w)
-            print(subs)
-            window[0] = s+1
-            window[1] = e+1
-        if sum > k:
+        sum_table.append(sum_table[-1] + s)
+    s, e = 0, 0
+    while (e < len(sequence) and s<=e):
+        sum = _sum(sum_table, s, e)
+        if sum < k: e += 1
+        elif sum > k: s += 1
+        else: 
+            results.append([s,e])
             s += 1
-            window[0] = s
-            
-        if sum < k:
             e += 1
-            window[1]= e
-    sorted_subs = sorted(subs, key = lambda x:x[1]-x[0])
-    # print(sorted_subs)
-    return sorted_subs[0]
+    results.sort(key=lambda x: x[1]-x[0])
+    return results[0] # 짧은 순으로 정렬
 
-def _sum(seq_table, window):
-    return (seq_table[window[1]] - seq_table[window[0]-1]) if window[0] > 0 else seq_table[window[1]]
+def _sum(sum_table, s, e):
+    return sum_table[e] - sum_table[s-1] if s > 0 else sum_table[e]
+
     
 solution([1,2,3,4,5], 7)
 
