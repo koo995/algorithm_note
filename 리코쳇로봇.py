@@ -1,67 +1,66 @@
+from collections import deque
+
 def solution(board):
-    directions = ["n", "w", "e", "s"]
-    # 먼저 위치를 찾는게 맞는거 같아.
-    r_pos = []
-    g_pos = []
-    for idx, row in enumerate(board):
-        if "R" in row:
-            r_x_i = row.find("R")
-            r_pos = [idx, r_x_i]
-        if "G" in row:
-            g_x_i = row.find("G")
-            g_pos = [idx, g_x_i]
-    print("현재위치: ",r_pos)
-    print("목표: ", g_pos)
-    results = [] # 여기는 G을 찾았을 때의 모든 cnt값을 담아주는 거야.
-    cnt = 0
-    def recur_fn(pos, cnt): # 그래서 이 함수는 무엇을 반환해야 할까? G을 찾았을때의 cnt값
-        for d in range(4):
-            next_pos = slide_to_end(pos,d, board)
-            print("nextpos: ", next_pos)
-            # if next_pos != pos:
-            #     cnt += 1
-            # # 끝낼 조건을 명시해야 할텐데... 못찾는다는건 어케하지?
-            # if next_pos == g_pos and
-            #     return cnt
-    recur_fn(r_pos,cnt)
-            
-                
-            
-    answer = 0
-    return answer
-
-def slide_to_end(pos, d, board):
-    # d는 0 1 2 3
-    next_pos = [pos[0], pos[1]]
-    if d == 0: # 동
-        for n in range(len(board[0])):
-            pos_x = pos[1] + n
-            if check_end([pos[0], pos_x], board):
-                next_pos = [pos[0], pos_x-1]
-                return next_pos
-    elif d == 1: # 서
-        for n in range(len(board[0])):
-            pos_x = pos[1] - n
-            if check_end([pos[0], pos_x], board):
-                next_pos = [pos[0], pos_x+1]
-                return next_pos
-    elif d == 2: # 남
-        for n in range(len(board)):
-            pos_y = pos[0] + n
-            if check_end([pos_y, pos[1]], board):
-                next_pos = [pos_y-1, pos[1]]
-                return next_pos
-    else: # 북
-        for n in range(len(board)):
-            pos_y = pos[0] - n
-            if check_end([pos_y, pos[1]], board):
-                next_pos = [pos_y+1, pos[1]]
-                return next_pos
-
-def check_end(pos, board):
-    if pos[0] >= len(board) or pos[0] < 0 or\
-        pos[1] < 0 or pos[1] >= len(board[0]) or\
-        board[pos[0]][pos[1]] == "D":
-        return True
     
+    def check_go(node):
+        if (0 <= node[0] < len(board)) \
+            and (0 <= node[1] < len(board[0])) \
+                and(board[node[0]][node[1]] != "D"):
+            return True
+        else :return False
+
+    def find_nodes(cur_node):
+        nodes = []
+        dx = [1, -1, 0, 0]
+        dy = [0, 0, 1, -1]
+        for i in range(4): # 대충 동서남북 방향이라 하자
+            y = cur_node[0]
+            x = cur_node[1]
+            go = True
+            m = 1
+            while(go):
+                next_node = [y + dy[i] * m, x + dx[i] * m]
+                prev_node = [y + dy[i] * (m-1), x + dx[i] * (m-1)]
+                go = check_go(next_node)
+                if go == False and prev_node != cur_node:
+                    nodes.append(prev_node)
+                m += 1
+        return nodes
     
+    INF = int(1e9)
+    dp = [[INF] * len(board[0]) for _ in range(len(board))] # 모든 거리는 최대로 만들어 본다.
+    visited = [[0] * len(board[0]) for _ in range(len(board))]  # 모든 노드는 아직 방문하지 않았다.
+    start = []
+    end = []
+    for row, b in enumerate(board):
+        if "R" in b:
+            start = [row, b.index("R")]
+        if "G" in b:
+            end = [row, b.index("G")]
+    nodes = find_nodes(start)
+    q = deque()
+    for node in nodes:
+        q.append((1, node))
+    while q:
+        print("지금 큐에 있는 것", q)
+        min_dist, cur_node = q.popleft()
+        dp[cur_node[0]][cur_node[1]] = min_dist
+        visited[cur_node[0]][cur_node[1]] = 1
+        n_nodes = find_nodes(cur_node)
+        for n_node in n_nodes:
+            if visited[n_node[0]][n_node[1]] != 1:
+                q.append((min_dist+1, n_node))
+
+    print(dp)
+    answer = dp[end[0]][end[1]]
+    return answer-1 if answer != INF else -1
+
+solution(["...D..R", ".D.G...", "....D.D", "D....D.", "..D...."])
+# dp와 bfs로 푼다...?
+d = [[5, 1000000000, 4, 1000000000, 1, 1000000000, 2],
+ [1000000000, 1000000000, 3, 8, 2, 1000000000, 1],
+ [6, 6, 1000000000, 7, 1000000000, 1000000000, 1000000000],
+ [1000000000, 5, 4, 1000000000, 5, 1000000000, 8],
+ [7, 6, 1000000000, 7, 6, 1000000000, 7]]
+# 매우 중요한것을 하나 얻은 것 같다. bfs에 치명적인 약점이 있군
+# 방문처리 하기전에 같은 노드에 하나의 쿠에 중복으로 담겨 있으면 이후의 녀석으로 바뀌는 구나...
