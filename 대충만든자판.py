@@ -1,19 +1,13 @@
 def solution(keymap, targets):
     map = {}
     for key in keymap:
-        for i in range(len(key)):
-            k = key[i] # 이녀석은 특정 문자
-            # map에 없다면 처음 넣어준다.
-            if k not in map:
-                map[k] = i + 1
-            else: # 있다면 최소값으로 변경
-                map[k] = min(map[k], i + 1)
+        for i, s in enumerate(key):
+            map[s] = min(map[s], i + 1) if s in map else i + 1
     result = []
     for target in targets:
         flag = True
         count = 0
-        for n in range(len(target)):
-            s = target[n]
+        for s in target:
             if s in map:
                 count += map[s]
             else: # 문자가 없다면 더이상 확인할 필요가 없다.
