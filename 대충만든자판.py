@@ -1,32 +1,30 @@
 def solution(keymap, targets):
-    result = [0] * len(targets)    
-    # 문자의 나타난 횟수를 초기화
-    char_table = {}
+    map = {}
     for key in keymap:
-        print("key:",key)
         for i in range(len(key)):
-            print("char:", key[i])
-            if key[i] in char_table :
-                char_table[key[i]] = min(char_table[key[i]], i+1)
-            else:
-                char_table[key[i]] = i + 1
-    print(char_table)
-    # target으로 체크하자
-    for i, target in enumerate(targets):
-        for j in range(len(target)):
-            if target[j] not in char_table:
-                result[i] = -1
+            k = key[i] # 이녀석은 특정 문자
+            # map에 없다면 처음 넣어준다.
+            if k not in map:
+                map[k] = i + 1
+            else: # 있다면 최소값으로 변경
+                map[k] = min(map[k], i + 1)
+    result = []
+    for target in targets:
+        flag = True
+        count = 0
+        for n in range(len(target)):
+            s = target[n]
+            if s in map:
+                count += map[s]
+            else: # 문자가 없다면 더이상 확인할 필요가 없다.
+                result.append(-1)
+                flag = False
                 break
-            else:
-                result[i] += char_table[target[j]]
-        
-        
-        
-    answer = result
-    return answer
+        if flag == False:
+            continue
+        result.append(count)
+    return result
 
 
-# keyError은 왜 나타나지? dict부분에 뭐가 문제인데...
-# dict에 key가 존재 하는지 않하는지 체크는 in 으로 해야하군... 없는 녀석을가지고 dict[key] 하니까 에러뜸
-# 'str' object cannot be interpreted as an integer 이건 어디서...?
-# 3항 연산자를 쓰면 더 깔끔하긴 하네
+# 어디서 오류가 발생한 것이지? 정확도가 절반나오네...
+# flag을 false로 했으면 true로 다시 되는 경우를 봐야지
