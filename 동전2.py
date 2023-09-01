@@ -1,21 +1,18 @@
 n, k = map(int, input().split())
-coins = [int(input()) for _ in range(n)]
+coins = [ int(input()) for _ in range(n)]
 coins.sort()
-dp = [-1] * (100000+1) # k번째까지 일단 모두 불가능으로 둔다...?
-for c in coins: # 해당 코인까지의 조합중 제일 작은건 역시 코인 하나만 쓰는 것이지
-    dp[c] = 1
-    
-if k <= coins[0]:
-    print(dp[k])
-else: # 여기서는 k가 coins[0]보다 큰 경우
-    for i in range(coins[0]+1, k+1): # 코인의 제일 작은 녀석부터...? 아니 그 다음녀석부터 체크해야할듯
-        temp = [dp[i-c]+1 for c in coins if i-c >= 0 and dp[i-c] != -1] # temp가 비었을 수 있다.
-        if not temp: # 비엇다면 처리하지 않는다.
-            continue
-        if dp[i] != -1: # 이미 경우의 수가 존재한다면
-            temp.append(dp[i])
-        dp[i] = min(temp)
-    print(dp[k])
+INF = int(1e9)
+dp = [INF] * (100001) # 100001까지의 가치를 나타내기 위함.
+for coin in coins:
+    dp[coin] = 1
+
+for i in range(coins[0]+1, k+1): # 첫번째 코인 전까지는 아무것도 못 만들테야
+    for coin in coins:
+        if i - coin >= 0 :
+            dp[i] = min(dp[i], dp[i-coin] + 1)
+print(dp[k] if dp[k] != INF else -1)
+
+
 
 
 # index 에러가 발생했다. 아마도 k의 값보다 c가 더 커서 그런 듯 하다
