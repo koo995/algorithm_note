@@ -33,7 +33,7 @@ for case in cases:
     result = list(arr)
     if R_count % 2 != 0:
         result.reverse()
-    print(result)
+    print(str(result).replace(" ", ""))
 
 
 # 시간 초과가 발생하네... 뒤집기에서 문제가 생기는 것 같아.
