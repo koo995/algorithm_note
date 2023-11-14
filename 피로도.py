@@ -1,40 +1,34 @@
 # index리스트를 소모시키기보단 fatigue을 소모시켜 나가는 방향으로 dfs을 수행하는 것이 좋구나
-def solution(fatigue, dungeons):
+
+
+def solution(k, dungeons):
     global dungeons_dict
+    global fatigue
+    fatigue = k
     dungeons_dict = {idx: dungeon for idx, dungeon in enumerate(dungeons)}
 
-    def dfs(dungeons, dungeon_order_lst: list, max_count, index_lst, fatigue):
-        global dungeons_dict
+    def dfs(dungeon_order_permut, ramain_index_lst):
         current_fatigue = fatigue
         max_count = 0
 
-        for dungeon in dungeon_order_lst:
+        for dungeon in dungeon_order_permut:
             required_min_fatigue, fatigue_consume = dungeon
             if required_min_fatigue <= current_fatigue:
                 current_fatigue -= fatigue_consume
                 max_count += 1
 
-        if len(dungeon_order_lst) == len(dungeons):
+        if len(dungeon_order_permut) == len(dungeons_dict):
             return max_count
 
-        for index in index_lst:
-            next_index_lst = index_lst.copy()
+        for index in ramain_index_lst:
+            next_index_lst = ramain_index_lst.copy()
             next_index_lst.remove(index)
-            next_dungeon_order_lst = dungeon_order_lst.copy()  # 이 부분 헷갈리네...
+            next_dungeon_order_lst = dungeon_order_permut.copy()  # 이 부분 헷갈리네...
             next_dungeon_order_lst.append(dungeons_dict[index])
-            max_count = max(
-                dfs(
-                    dungeons,
-                    next_dungeon_order_lst,
-                    max_count,
-                    next_index_lst,
-                    fatigue,
-                ),
-                max_count,
-            )
+            max_count = max(dfs(next_dungeon_order_lst, next_index_lst), max_count)
         return max_count
 
-    return dfs(dungeons, [], 0, [i for i in range(len(dungeons))], fatigue)
+    return dfs([], [i for i in range(len(dungeons))])
 
 
 print(solution(80, [[80, 20], [50, 40], [30, 10]]))
@@ -42,6 +36,7 @@ print(solution(80, [[80, 20], [50, 40], [30, 10]]))
 # current_fatigue가 업데이트가 안되니까 무한루프에 빠지는구나
 # 그 이유는 던전 index을 계속 같은녀석을 반복하는데...
 # dho dungeon_order_lst가 for문 이후의 녀석으로 계속 유지되는 것이지?
+# 너무 많은 시행착오가 있었다. dfs에 필요이상으로 변수를 많이 받았고... 다행히 백트래킹에 대해서 조금은 알게된것 같다
 
 
 from itertools import permutations
@@ -64,7 +59,7 @@ def solution1(k, dungeons):
     return answer
 
 
-print(solution1(80, [[80, 20], [50, 40], [30, 10]]))
+# print(solution1(80, [[80, 20], [50, 40], [30, 10]]))
 
 # `for` 루프를 나왔을 때 `dungeon_order_lst`의 값이 유지되는 것은 Python에서 리스트와 같은 가변 객체(mutable objects)의 동작 방식 때문입니다. 가변 객체는 함수에 전달될 때 참조(reference)로 전달되기 때문에, 함수 내에서 이 객체를 수정하면 원본 객체도 변경됩니다.
 
