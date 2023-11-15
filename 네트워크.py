@@ -19,8 +19,6 @@ def solution(n, computers):
     visited_list = [False] * n
 
     def bfs(idx):
-        global visited_list
-        global graph
         count = 0
         queue = deque()
 
