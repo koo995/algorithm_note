@@ -11,19 +11,23 @@ def solution(k, dungeons):
         current_fatigue = fatigue
         max_count = 0
 
+        # 던전 순서의 조합에 따라 몇개에 들어갈 수 있는지 갯수를 센다.
         for dungeon in dungeon_order_permut:
             required_min_fatigue, fatigue_consume = dungeon
             if required_min_fatigue <= current_fatigue:
                 current_fatigue -= fatigue_consume
                 max_count += 1
 
+        # 재귀함수의 종료조건
         if len(dungeon_order_permut) == len(dungeons_dict):
             return max_count
 
         for index in ramain_index_lst:
+            # 방문하지 않은 던전리스트에서 다음에 방문할 던전의 index을 제외시킨다.
             next_index_lst = ramain_index_lst.copy()
             next_index_lst.remove(index)
-            next_dungeon_order_lst = dungeon_order_permut.copy()  # 이 부분 헷갈리네...
+            # 던전의 방문 순서에 다음 던전을 추가한다
+            next_dungeon_order_lst = dungeon_order_permut.copy()
             next_dungeon_order_lst.append(dungeons_dict[index])
             max_count = max(dfs(next_dungeon_order_lst, next_index_lst), max_count)
         return max_count
@@ -42,6 +46,7 @@ print(solution(80, [[80, 20], [50, 40], [30, 10]]))
 from itertools import permutations
 
 
+# 던전의 순열에 대해서 몇개의 던전을 들어갈 수 있는지 반환한다.
 def check_(dungeons, k):
     result = 0
     for dungeon in dungeons:
