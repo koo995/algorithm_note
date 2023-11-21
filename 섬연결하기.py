@@ -1,14 +1,18 @@
-# 이것을 잘 못 했구나? 이것도 재귀적으로 부모노드를 찾아 올라가야 하는 것이군...
 def find_parent(node):
+    # 종료조건
     if parent_table[node] == node:
         return node
+    # 재귀적으로 탐색하여 최상위 부모노드(노드 번호가 작은)를 찾는다.
     parent = find_parent(parent_table[node])
     return parent
 
 
 def check_cycle(node1, node2):
+    # 각 노드의 부모노드를 찾아서 상위 노드(작은 녀석)가 먼저 오도록 한다.
     parents = sorted([find_parent(node1), find_parent(node2)])
+    # 노드1과 노드2의 부모가 다르다면 사이클을 이루지 않는다는것.
     if parents[0] != parents[1]:
+        # 두 노드의 부모노드가 일치하도록 테이블에 기록한다.
         parent_table[parents[1]] = parents[0]
         return False
     return True
@@ -19,14 +23,16 @@ def solution(n, costs: list):
 
     total_min_cost = 0
     road_count = 0
+    # 각 노드는 본인을 부모노드로 가지도록 테이블에 초기화한다.
     parent_table = [i for i in range(n)]
+    # 비용이 작은 녀석이 먼저 정렬된다.
     ordered_by_cost_asc = sorted(costs, key=lambda cost: cost[2])
-    for cost in ordered_by_cost_asc:
-        c = cost[2]
-        first_node = cost[0]
-        second_node = cost[1]
+    for node_info in ordered_by_cost_asc:
+        cost = node_info[2]
+        first_node = node_info[0]
+        second_node = node_info[1]
         if check_cycle(first_node, second_node) == False:
-            total_min_cost += c
+            total_min_cost += cost
             road_count += 1
         if road_count == n - 1:
             return total_min_cost
