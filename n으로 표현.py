@@ -75,13 +75,13 @@ def solution2(N, number):
                     combi_table[i].add(int(result))
 
     INF = 1e9
-    dp = [INF] * 32001  # 최소값을 기록할 dp테이블을 하나 만들고
-    combi_table = [set() for _ in range(9)]  # N이 i개 있을때 조합으로 만들어지는 숫자들을 따로 기록한다.
-
+    dp = [INF] * 32001  # 인덱스에 해당하는 수에 대해서 N개로 만들 수 있는 최소 갯수를 기록한다.
+    combi_table = [set() for _ in range(9)]  # N이 i개 있을때 조합으로 만들어지는 숫자들을 집합으로 기록한다.
+    # N이 1개 일때 만들 수 있는 경우에 대해서 테이블들을 초기화 한다.
     dp[N] = 1
     combi_table[1].add(N)
+    # N이 2개부터 탐색한다.
     for i in range(2, 9):
-        # 우선 동전을 i(최소 2)개 쓸때 만들 수 있는 조합은 어떻게 되지?
         a = 1
         b = i - a
         while a <= b:
