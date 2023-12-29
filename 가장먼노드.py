@@ -32,4 +32,33 @@ def solution(n, infos):
     return distance.count(max_value)
 
 
-print(solution(6, [[3, 6], [4, 3], [3, 2], [1, 3], [1, 2], [2, 4], [5, 2]]))
+def solution2(n, infos):
+    import heapq
+
+    # n은 2만 이하, vertex는 5만 이하
+    INF = int(1e9)
+    distance = [INF if i != 0 else 0 for i in range(n + 1)]
+    # 자 먼저 정보를 가지고 그래프를 초기화 하자.
+    graph = [[] for _ in range(n + 1)]
+    for node1, node2 in infos:
+        graph[node1].append(node2)
+        graph[node2].append(node1)
+    print(graph)
+    h = []
+    distance[1] = 0
+    heapq.heappush(h, (1, 0))  # 이 정보는 1번 노드 까지 비용은 0이란 것이다.
+    while h:
+        node, d = heapq.heappop(h)
+        # 처리된 적이 있다면 무시... 이 부분이 조금 헷갈리는데?
+        if d > distance[node]:
+            continue
+        for n_node in graph[node]:  # 어짜피 여기서 정보가 없으면 반복문은 실행이 안된다.
+            if distance[n_node] > d + 1:
+                distance[n_node] = d + 1  # 계속해서 업데이트가 될 수 있는데 방문처리를 하는것이 맞나?
+                heapq.heappush(h, (n_node, d + 1))
+    print("distance: ", distance)
+    max_v = max(distance)
+    return distance.count(max_v)
+
+
+print(solution2(6, [[3, 6], [4, 3], [3, 2], [1, 3], [1, 2], [2, 4], [5, 2]]))
