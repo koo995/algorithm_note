@@ -57,7 +57,7 @@ def solution(begin, target, words: list):
 
 
 # print(solution("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"]))
-print(solution("hit", "cog", ["hot", "dot", "dog", "lot", "log"]))
+# print(solution("hit", "cog", ["hot", "dot", "dog", "lot", "log"]))
 # 먼저 word을 통해 그래프를 만들어야 겠어. 추가로 그래프에 begin도 넣을까
 # dfs는 기본적으로 노드들을 방문 하는 방법이다. 여러번 방문하면서 탐색할려면 또 다른 조건을 추가해야 한다.
 # dfs? 그러니까 그냥 단순히 재귀를 사용할때 무엇을 반한할 것이냐를 전해야 하는데...
@@ -65,3 +65,50 @@ print(solution("hit", "cog", ["hot", "dot", "dog", "lot", "log"]))
 # 오히려 visited을 사용하지 말고 모든 결과를 하나의 리스트에 넣어서 반환하는 방식이 나을지도
 # visited는 가변객체라서... 넘겨주는 값이 같은 주소값이라 재귀적으로 이동하는 동안 항상 같은 주소가 왔다갔다 한 것 같아.
 # 햐... 이거 너무너무 중요하다. 진짜.
+
+
+def solution2(begin, target, words: list):
+    from collections import defaultdict
+    import heapq
+
+    INF = int(1e9)
+
+    # 연결관계 그래프를 만들어 줘야겠다.
+    # 하나의 변환만으로 갈수 있나 없나가 연결관계의 조건이다.
+    def _check(word1, word2):
+        # 자 여기서 n개의 길이의 알파벳에서 한개의 알파벳만 다르다는 것을 체크해줘야 한다.
+        count = 0
+        for i in range(len(word1)):
+            if word1[i] != word2[i]:
+                count += 1
+                if count == 2:
+                    return False
+        return True
+
+    def dijkstra(node):
+        q = []
+        heapq.heappush(q, (0, node))
+        distance[node] = 0
+        while q:
+            dis, now = heapq.heappop(q)
+            if distance[now] < dis:
+                continue
+            for n_node in graph[now]:
+                cost = dis + 1
+                if cost < distance[n_node]:
+                    distance[n_node] = cost
+                    heapq.heappush(q, (cost, n_node))
+
+    words = [begin] + words
+    graph = defaultdict(list)
+    for idx, word1 in enumerate(words[:-1]):
+        for word2 in words[idx + 1 :]:
+            if _check(word1, word2):  # 서로 관련이 있다면 양쪽으로 다 넣어주자잉
+                graph[word1].append(word2)
+                graph[word2].append(word1)
+    distance = {word: INF for word in words}
+    dijkstra(begin)
+    return distance[target] if target in distance else 0
+
+
+print(solution2("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"]))
