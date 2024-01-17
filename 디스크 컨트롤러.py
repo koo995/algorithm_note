@@ -100,7 +100,7 @@ def solution3(jobs):
 # print(solution2([[1000, 1000]]))
 # print(solution2([[0, 1], [0, 1], [0, 1]]))
 # print(solution2([[1, 9], [1, 4], [1, 5], [1, 7], [1, 3]]))
-print(solution2([[1, 4], [7, 9], [1000, 3]]))
+# print(solution2([[1, 4], [7, 9], [1000, 3]]))
 # print(
 #     solution2(
 #         [
@@ -126,3 +126,28 @@ print(solution2([[1, 4], [7, 9], [1000, 3]]))
 # list index out of range가 계속 발생하는데... 이거 어케 처리할지는 알겠지만 좀 간편한 방법 없나?
 # q가 텅비었으나 계속 jobs을 확인해야 하는 경우도 있고 끝내야 하는 경우도 있다. 어케  flag을 하나 두고 해결했다.
 # if와 elif에서 코드가 중복되는데 해결할 방법이 없을까?
+
+
+def solution4(jobs: list):
+    q = []
+    total_times = []  # sum 후에 크기로 나눠서 반환
+    jobs.sort(key=lambda job: job[0])  # 요청 순서대로 정렬
+    while jobs or q:
+        if q:
+            duration, request_time = heapq.heappop(q)
+            total_times.append(duration + start_time - request_time)
+            start_time = start_time + duration
+        else:
+            if jobs:
+                start_time = jobs[0][0]
+        while jobs and jobs[0][0] <= start_time:  # 우선 jobs가 있어야 빼내오니까?
+            job = jobs.pop(0)
+            heapq.heappush(q, (job[1], job[0]))
+    return sum(total_times) // len(total_times)
+
+
+print(solution4([[0, 3], [1, 9], [2, 6]]))
+# 자... 테스트 케이스 하나가 잘 안되고 있다. 뭐가 문제일까?
+# 오류는 시간초과이다. while문에서 문제가 발생했다고 좁히자. 1번째? 두번째? q가 있다면 반드시 뽑아낸다. 그렇다면 jobs의 존재에서 문제가 발생했다. 아 케이스 하나가 있겠다. jobs가 남아있는데 그녀석이 start_time보다 큰 경우일 것이다.
+# 하드디스크가 작업을 수행하고 있지 않을 때에는 먼저 요청이 들어온 작업부터 처리합니다. 이 부분에서 문제 발생. 어떻게 처리하지? 현재 디스크에 아무것도 없는 상태를 어떻게 처리할까가 문제다.
+# q는 비어있고 jobs는 남아있는 경우가 현재 시간이 아직 안된 것이니까 현재 시간을 맞춰준다.
