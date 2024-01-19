@@ -1,49 +1,58 @@
-from collections import deque
+def solution(maps):
+    from collections import deque
+    import copy
 
-n, m = map(int, input().split())
-array = []
-for _ in range(n):
-    array.append(list(map(int, input())))
+    max_y = len(maps)
+    max_x = len(maps[0])
+    start = None
+    end = None
+    lever = None
+    for y in range(max_y):
+        for x in range(max_x):
+            if maps[y][x] == "S":
+                start = (y, x)
+            if maps[y][x] == "L":
+                lever = (y, x)
+            if maps[y][x] == "E":
+                end = (y, x)
+    visited = [[0] * max_x for _ in range(max_y)]
+    result = []
+    dx = [1, -1, 0, 0]
+    dy = [0, 0, 1, -1]
 
-cost = [[0] * m for _ in range(n)]
-d_row = [1, -1, 0, 0]
-d_col = [0, 0, 1, -1]
+    def bfs(start, target, visited):
+        q = deque()
+        visited[start[0]][start[1]] = 1
+        q.append((start[0], start[1], 0))
+        while q:
+            y, x, count = q.popleft()
+            print(f"y: {y}, x: {x}, count: {count}")
+            if (y, x) == target:
+                result.append(count)
+                break
+            for i in range(4):
+                n_x = x + dx[i]
+                n_y = y + dy[i]
+                if (
+                    0 <= n_y < max_y
+                    and 0 <= n_x < max_x
+                    and visited[n_y][n_x] == 0
+                    and maps[n_y][n_x] != "X"
+                ):
+                    visited[n_y][n_x] = 1
+                    q.append((n_y, n_x, count + 1))
+
+        return 0
+
+    bfs(start, lever, copy.deepcopy(visited))
+    print("-------------------")
+    bfs(lever, end, copy.deepcopy(visited))
+
+    print("result", result)
+
+    return sum(result) if len(result) == 2 else -1
 
 
-def check_boundary(i, j):
-    return i >= 0 and i < n and j >= 0 and j < m
+print(solution(["SOOOL", "XXXXO", "OOOOO", "OXXXX", "OOOOE"]))
 
-
-def check_monster(i, j):
-    return array[i][j] == 0
-
-
-def bfs(i, j):
-    global cost
-    q = deque()
-    q.append((i, j, 0))  # row col cost
-    while q:
-        row, col, prev_c = q.popleft()
-        cost[row][col] = prev_c + 1
-        for i in range(len(d_row)):
-            n_row = row + d_row[i]
-            n_col = col + d_col[i]
-            if not check_boundary(n_row, n_col):  # 이 부분을 먼저 처리해 주고 몬스터나 방문을 처리해야지!
-                continue
-            if not check_monster(n_row, n_col) and cost[n_row][n_col] == 0:
-                q.append((n_row, n_col, cost[row][col]))
-
-
-bfs(0, 0)
-for i in range(n):
-    print(cost[i])
-print(cost[n - 1][-1])
-
-
-# 현재 궁금. 이걸 최단거리 문제인데... bfs? dfs? 또는 다익스트라? 그런걸 어떻게 구분할까?
-# 어짜피 다 이어져 있으니까 포문을 돌 필요가 있을까? n과 m도 4-200인데... 다익스트라로도 가능?
-# 다 돌필요가 없다 그냥 0,0에서 bfs 수행하면 끝
-# 과거의 값을 저장하고 그 값에서 더하는 것은 어떻게 하지...?
-# list index out of range가 뜨는 이유가 뭘까
-# check boundary을 반대로 했네...
-# 굳이 visited 테이블을 만들 필요는 없었던거 같아... cost가 0일때 새롭게 방문하면 되니까
+# 뭐... 이 이상으로 풀이가 짧은 수는 없네
