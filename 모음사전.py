@@ -22,7 +22,9 @@ def solution2(word):
         result = list(map("".join, product(chars, repeat=len(chars) - blank_num)))
         table += result
     print("table: ", table)
-    table.sort()
+    table.sort()  # 이걸보면... 모든 조합을 다 구하고 결국에 정렬을 하는 것이구나? 한가지 알아가야할것은... sort함수가 어떤식으로 정렬을 하는가야. 사전식? 으로 한다는 것인데 사전식이 어떤건지 알아둘 필요가 있어.
+    for word in table:
+        print(word)
     return table.index(word)
 
 
