@@ -107,14 +107,46 @@ def solution2(arrows):
     return answer
 
 
-print(solution([6, 6, 6, 4, 4, 4, 2, 2, 2, 0, 0, 0, 1, 6, 5, 5, 3, 6, 0]))
-print(solution([6, 5, 2, 7, 1, 4, 2, 4, 6]))
-print(solution([5, 2, 7, 1, 6, 3]))
-print(solution([6, 2, 4, 0, 5, 0, 6, 4, 2, 4, 2, 0]))
-print(solution([0, 6, 4, 2, 7, 2, 5]))
+# print(solution([6, 6, 6, 4, 4, 4, 2, 2, 2, 0, 0, 0, 1, 6, 5, 5, 3, 6, 0]))
+# print(solution([6, 5, 2, 7, 1, 4, 2, 4, 6]))
+# print(solution([5, 2, 7, 1, 6, 3]))
+# print(solution([6, 2, 4, 0, 5, 0, 6, 4, 2, 4, 2, 0]))
+# print(solution([0, 6, 4, 2, 7, 2, 5]))
 
 # 아하.... set은 해시가 안되는 구나...
 # 뭐때문에 틀렸을까? 시간초과가 발생하기도 한다.
 # set안에 set을 넣는 것은 안되는 구나... 계속 unhashable이 발생하네
 # 그렇다면 line의 방문처리는 어케 하는거지?
 # 어디서 뭐가 잘못된 것이지? 논리구조는 맞는거 같은데... 되게 사소한 어느 부분에서 틀렸을 것 같다.
+
+
+def solution3(arrows):
+    from collections import defaultdict
+
+    dx = [0, 1, 1, 1, 0, -1, -1, -1]
+    dy = [-1, -1, 0, 1, 1, 1, 0, -1]
+    c_point = (0, 0)
+    visited_point = defaultdict(int)  # 미방문은 0 방문했으면 1 역시 안의 값을 괄호안에다가 적어주는 것이군...
+    visited_line = defaultdict(int)  # 불변객체는 해싱이 된다...
+    visited_point[(0, 0)] = 1
+    count = 0
+    for arrow in arrows:
+        for _ in range(2):
+            n_point = (c_point[0] + dy[arrow], c_point[1] + dx[arrow])
+            if visited_point[n_point] == 1 and (
+                visited_line[(c_point, n_point)] == 0
+                or visited_line[(n_point, c_point) == 0]
+            ):  # 방문했던 점이면서... 타고온 라인은 새로운 라인이어야 한다.
+                count += 1
+            visited_point[n_point] = 1
+            visited_line[(c_point, n_point)] = 1
+            visited_line[(n_point, c_point)] = 1
+            c_point = n_point
+    return count
+
+
+print(solution3([6, 6, 6, 4, 4, 4, 2, 2, 2, 0, 0, 0, 1, 6, 5, 5, 3, 6, 0]))
+
+# 방문했다 안했다를... set이나 collections으로 처리를 하기에는... 체크하는데 매번 상당히 큰 시간복잡도를 가진다.
+# 그렇다면 indexing 방식을 이용해야 하는데...
+# 방문한 라인인지 아닌지는 어떻게 처리하지?
