@@ -12,6 +12,24 @@ print(solution([23, 45, 6, 67, 89, 99, 76, 45, 23, 67, 9, 6, 4, 999, 3, 91, 92, 
 
 import functools
 
+from datetime import date
+
+
+class User:
+    def __init__(
+        self, id: int, name: str, birthdate: date, admin: bool = False
+    ) -> None:
+        self.id = id
+        self.name = name
+        self.birthdate = birthdate
+        self.admin = admin
+
+    def __repr__(self):
+        return (
+            self.__class__.__qualname__ + f"(id={self.id!r}, name={self.name!r}, "
+            f"birthdate={self.birthdate!r}, admin={self.admin!r})"
+        )
+
 
 def comparator(a, b):
     t1 = a + b
