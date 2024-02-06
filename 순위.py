@@ -21,7 +21,33 @@ def solution(n, results):
     return n - len([1 for node in graph[1:] if 0 in node[1:]])
 
 
-print(solution(7, [[4, 3], [4, 2], [3, 2], [1, 2], [2, 5], [7, 1], [2, 6]]))
+# print(solution(7, [[4, 3], [4, 2], [3, 2], [1, 2], [2, 5], [7, 1], [2, 6]]))
 
 
 # 아하... 2에서 1은 갈수 있고, 1에서는 5를 갈수있을지 모르는것과 2는 못간다는것은 확실하게 구분해야 하구나...
+
+
+def solution2(n, results):
+    dp = [[0] * (n + 1) for _ in range(n + 1)]
+    for win, lose in results:
+        dp[win][lose] = 1
+        dp[lose][win] = -1
+    for k in range(1, n + 1):
+        for a in range(1, n + 1):
+            for b in range(1, n + 1):
+                if dp[a][k] == 1 and dp[k][b] == 1:
+                    dp[a][b] = 1
+                elif dp[a][k] == -1 and dp[k][b] == -1:
+                    dp[a][b] = -1
+    count = 0
+    for row in dp[1:]:
+        row: list = row[1:]  # 슬라이싱함
+        if row.count(0) == 1:
+            count += 1
+    return count
+
+
+print(solution2(5, [[4, 3], [4, 2], [3, 2], [1, 2], [2, 5]]))
+
+# 플로이드 워셜 알고리즘이라..
+# 바킹독의 알고리즘 강의 듣기
