@@ -79,7 +79,23 @@ def solution2():
     return "".join(stack_1 + stack_2[::-1])
 
 
-print(solution2())
+# print(solution2())
 
 # 리스트에 원소가 하나인 경우 왜 reverse()을 하면 빈 리스트지?
 # list[::-1] 이렇게하면 자동으로 역순이군?
+
+
+# L은 왼쪽 D는 오른쪽 B는 왼쪽 녀석 삭제 P는 삽입
+
+
+def solution3():
+    input_str = list(input())
+    print("input_str: ", input_str)
+    N: int = len(input_str)
+    orders = [(lambda order: order.split())(input()) for _ in range(int(input()))]
+    print("orders: ", orders)
+
+    pass
+
+
+solution3()

@@ -201,6 +201,11 @@ def solution4(info, edges):
     return max(result)
 
 
+def solution4():
+    # 비트마스킹을 이용한 메모이제이션기법을 사용해보자
+    pass
+
+
 print(
     solution4(
         [0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1],
