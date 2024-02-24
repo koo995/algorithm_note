@@ -11,7 +11,9 @@ def solution():
 
     def dfs(
         start: int, visited
-    ) -> int:  # dfs의 역할을 무엇으로 할 것이냐? 최소값을 전달하는 것으로 목적을 정한다 해야할까?
+    ) -> (
+        int
+    ):  # dfs의 역할을 무엇으로 할 것이냐? 최소값을 전달하는 것으로 목적을 정한다 해야할까?
         # 여기서 종료조건을 정의한다. 아니 정확히는 모든 곳을 방문했을때 어떤 값을 전달하지? 그 동안의 합을 전달해야 하지 않나?
         # 아니다 여기서는 그동안의 전체가 아니라 바로 전 녀석에게 값을 전달해줘야지
         if visited == (1 << N) - 1:
@@ -45,7 +47,7 @@ def solution():
     )  # visited는 이전에 방문했던 목록을 뜻한다. start의 방문처리를 해준다.
 
 
-print(solution())
+# print(solution())
 
 # 시간초과가 발생했다... 뭐가 문제지?
 
@@ -77,7 +79,7 @@ def solution2():
     return dfs(start, visited | 1 << start)
 
 
-print(solution2())
+# print(solution2())
 
 # 시간초과가 발생했다... 뭐가 문제지?
 # 어떤 점에서 어떤 길로도 갈 수 없으면 어떻게 될까?
@@ -108,3 +110,82 @@ dp를 INF로 놓고 dfs를 하면 발생할 수 있는 문제가
 
 조금 두서 없는 글인데 해결 되셨으면 좋겠습니다
 """
+
+
+def solution3():
+    N = int(input())  # 2~16
+    costs = [list(map(int, input().split())) for _ in range(N)]
+    INF = int(1e9)
+    dp = [
+        [-1] * (1 << N) for _ in range(N)
+    ]  # 우선 방문하지 않았으니까 모두 -1로 둔다. 방문했고 불가능하다면 INF로 한다.
+
+    # 아무것도 반환하지는 않을 것이다. 다만 dp테이블에 계속해서 초기화해나가는 함수다.
+    def dfs(start, visited):
+
+        # 모든것을 방문 했다면... 아... 어짜피 첫번째 노드는 방문처리가 되어있고... 마지막 녀석까지 갔고 이제 마지막 녀석에서 처음 녀석으로 돌아갈 일만 남았군...
+        if visited == (1 << N) - 1:
+            if costs[start][0] != 0:
+                return costs[start][0]
+            else:  # 갈수있는 길이 없다면?
+                return INF
+        if dp[start][visited] != -1:
+            return dp[start][visited]
+
+        # 그런데
+        # 후... 여기서 방문처리를 해줘야 하는것을 잘 모르겠다...
+        dp[start][visited] = INF
+
+        for next in range(N):
+            # 대신에 현재에서 next로 길이 있어야 한다. 그리고 방문했던 녀석이면 계산의 중복을 피하기 위해서 제외해야한다.
+            if costs[start][next] == 0 or (visited & (1 << next) != 0):
+                continue
+            # 그러니까 여기서 dp[start][visited]라는 것은 반복문을 위에서 도는 것을 통해 next의 모든 경우를 다 고려하여 min 값을 얻은 것이다. 그런데 그게 INf라면?
+            dp[start][visited] = min(
+                dp[start][visited],
+                dfs(next, visited | 1 << next) + costs[start][next],
+            )
+        return dp[start][visited]  # 결국에 이 함수는 이 최소비용을 던진다는 것인데...
+
+    # start는 0번부터 시작하고
+    start = 0
+    # dp의 두번째 인자로 방문상태를 나타내기 위한, 이진수로는 모두 0이 되겠지? 방문한 것이 없으니까
+    visited = 0b0
+    result = dfs(start, visited | 1 << start)
+    print("result: ", result)
+
+
+# 위의 코드를 깔끔히...
+def solution4():
+    N = int(input())
+    costs = [list(map(int, input().split())) for _ in range(N)]
+    INF = int(1e9)
+    dp = [[INF] * (1 << N) for _ in range(N)]
+
+    def dfs(start, visited):
+        if visited == (1 << N) - 1:
+            if costs[start][0] != 0:
+                return costs[start][0]
+            else:
+                return INF - 1
+        if dp[start][visited] != INF:
+            return dp[start][visited]
+
+        for next in range(N):
+            if costs[start][next] == 0 or (visited & (1 << next) != 0):
+                continue
+            dp[start][visited] = min(
+                dp[start][visited],
+                dfs(next, visited | 1 << next) + costs[start][next],
+            )
+        return dp[start][visited]
+
+    start = 0
+    visited = 0b0
+    result = dfs(start, visited | 1 << start)
+    print(result)
+
+
+print(solution3())
+# 극단적인 케이스에 대해서 결국에 계산은 되지만 시간이 너무너무 많이 걸린다는 것이 문제였구나
+# 순환할수 없는 경우와 방문하지않은 경우는 분리를 해야 하는 거야
