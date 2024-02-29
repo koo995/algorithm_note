@@ -81,39 +81,38 @@ def solution2(tickets):
 
 def solution3(tickets: list):
     from collections import defaultdict
-    import time
+    import copy
 
     graph = defaultdict(list)
     for s, e in tickets:
         graph[s].append(e)
-    for key in graph.keys():
-        graph[key].sort(reverse=True)
 
-    # 길은 반드시 있을 것이고... 그리디하게 가도 될것 같은데?
-    # while문을 사용할 방법은 뭐가 있을가
-    # 그래프는 {'ICN': ['SFO', 'ATL'], 'SFO': ['ATL'], 'ATL': ['SFO', 'ICN']}
-    # 완료라는 것은 tickets을 모두 소모했거나... 어쨋든 모두 소모한 경우인데,
-    stack = ["ICN"]
-    result = [start]
-    while stack:  # 확실한 것은 티켓을 다 소모했다는 것이 필요하다
-        # 티켓을 다 소모할때 까지 반복문을 돌린다.
-        # 먼저 start에 해당하는 노드에서 그리디하게 다음 노드를 선택한다.
-        # 그리디하게 선택했지만 길이 없는 곳일 수 있다.
-        # 그렇다면 다음 노드를 선택해야 할 것이다.
-        # 그렇다면 다음 노드를 선택하기 위해서는... 한 노드에서 연결된 노드들을 담아줄 변수가 필요하다.
-        # 그렇다면 성공조건은 어떻게 하나? 더이상 방문해야할 곳이 없다. 즉 모든 곳을 방문했다? 둘이 똑같은 말이다 경우에 따라서는 두가지중 하나를 선택하는 것이 맞다.
-        if graph[start]:  # 여기에 여러개가 3있을 수 있단 것이지
-            next_node = stack.pop()  # 최대한 그리디하게 가는 것이다.
-            result.append(next_node)  # 이렇게 하면 제일 빠른 녀석이 나올 것이다.
-            start = next_node
-        else:
-            next_node = stack.pop()
+    result = []
 
-    print("results: ", results)
-    # 그리기하게 가도 되겠지만 경우를 다 찾고 정렬해서 빠른 녀석을 답으로 제출한다.
-    # 하지만 잘 생각해보니 모든 경로중에서... 글자가 앞선 녀석을 선택한다? 어떻게? 그건 안되겠는데?
-    # 그렇다면 처음부터 쩔수없이 그리디하게 가능 방법?
-    pass
+    # {'ICN': ['SFO', 'ATL'], 'SFO': ['ATL'], 'ATL': ['SFO', 'ICN']})
+    def dfs(node: str, tickets: list, answer: list) -> None:
+        # 종료조건... 티켓을 모두다 소모했다?
+        if not tickets:
+            result.append(answer)
+            return
+        for n_node in graph[node]:
+            # 왔던 길을 또 올 수 있잖아? 그것에 대한 중복을 없애기 위해서 티켓을 제거하는데..
+            # 와... 이거 뭔 차이야? deepcopy()는 시간 오류뜨고... copy()는 성공이고...
+            # 아! 단순히... 테스트케이스 1번이 어머어마한 연산때문에 deepcopy()가 시간초과가 발생하는 것...
+            # 한가지 중요한 것은 역시 할당과 얕은 복사의 차이!
+            # tmp_tickets = copy.deepcopy(tickets)
+            tmp_tickets = tickets.copy()
+            print(f"id: {id(tmp_tickets)}, tickets: {tmp_tickets}")
+            tmp_answer = answer.copy()
+            if [node, n_node] in tmp_tickets:
+                tmp_tickets.remove([node, n_node])
+                tmp_answer.append(n_node)
+                dfs(n_node, tmp_tickets, tmp_answer)
+
+    print(f"id: {id(tickets)}, tickets: {tickets}")
+    start = "ICN"
+    dfs(start, tickets, [start])
+    print("result: ", result)
 
 
 print(
@@ -121,3 +120,7 @@ print(
         [["ICN", "SFO"], ["ICN", "ATL"], ["SFO", "ATL"], ["ATL", "ICN"], ["ATL", "SFO"]]
     )
 )
+
+# 방금 알았는데.... 이중리스트인데도 정렬이 가능하네....?
+# 근데.. 과연 이렇게 재귀함수 안에... 가변객체를 넣어두는 것이 괜찮은가?
+# 자 문제는 과연 dic인데... dic에 대해서 안에 원소들이 없더라도 키값만 있는것으로도 그 길이는 키에 해당하는구나...
