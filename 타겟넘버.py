@@ -22,7 +22,7 @@ def solution(numbers, target):
     return dfs(numbers, target, count, number_pointer)
 
 
-print(solution([4, 1, 2, 1], 4))
+# print(solution([4, 1, 2, 1], 4))
 
 # numbers의 원소를 하나하나 다 바꿔볼까? 마지막에 sum 함수 써서 확인해보면 어떨까?
 # 그렇다면 어떻게 그 모든케이스의 경우를 체크하지? 20개 이하면... 2^20의 가짓수인데... 104만 정도 된다고 볼수 있다. 그러면 할만한가?
@@ -104,3 +104,30 @@ def dfs(nums, idx, n, target):
 def solution3(numbers, target):
     answer = dfs(numbers, 0, 0, target)
     return answer
+
+
+def solution4(numbers, target):
+    # numbers가 음수일수 잇고 양수일수있다.
+    # [[-1, 1], [-2, 2], [-3, 3]] 이런 모양일때...
+    # 1, 2, 3으로 더하거나 빼서 만들수있는 모든 경우를 더하거나 빼서 만들수 있냐? 필요한건 갯수를 구해라 이다.
+    # 20개 이하인데... 모든 경우의 수는 2^20... 100만의 시간 복잡도를 가진다.. 할만한데? 완전탐색을 할 수 밖에 없다.
+    numbers = [[number, -number] for number in numbers]
+
+    def dfs(start, count, sum_value):
+        if start == len(numbers) - 1:
+            if sum_value == target:
+                count += 1
+            return count
+
+        for i in range(2):
+            n_node = start + 1
+            count = max(count, dfs(n_node, count, sum_value + numbers[n_node][i]))
+        return count
+
+    start = -1
+    count = 0
+    sum_value = 0
+    return dfs(start, count, sum_value)
+
+
+solution4([1, 1, 1, 1, 1], 3)
