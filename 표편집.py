@@ -8,16 +8,12 @@ def solution(n, k, cmds):
 
     def operate(q: deque, stack: list, cmd):
         if cmd[0] == "D":
-            q.rotate(
-                -int(cmd[-1])
-            )  # 음... 이것도 안에든 숫자가 크다면 그만큼 잡아먹긴 하는데
+            q.rotate(-int(cmd[-1]))  # 음... 이것도 안에든 숫자가 크다면 그만큼 잡아먹긴 하는데
             return
         elif cmd[0] == "U":
             q.rotate(int(cmd[-1]))
             return
-        elif (
-            cmd[0] == "C"
-        ):  # 삭제하는 경우니까... 첫재녀석 삭제하는 경우, 가운데, 마지막 삭제하는 경우를 정해보자.
+        elif cmd[0] == "C":  # 삭제하는 경우니까... 첫재녀석 삭제하는 경우, 가운데, 마지막 삭제하는 경우를 정해보자.
             if (
                 q[0] > q[1]
             ):  # 여기서 가장 마지막인 녀석을 비교해야 하는데.. 딱 하나 남아서 그것마저 제거할 상황은 주어지지 않는다.
@@ -26,9 +22,7 @@ def solution(n, k, cmds):
                 stack.append((del_node, prev_node))
                 q.rotate(1)
                 return
-            del_node = (
-                q.popleft()
-            )  # 여기서 다 삭제하는 경우는 남지가 않는데... 대신 하나만 남을 수 있다.
+            del_node = q.popleft()  # 여기서 다 삭제하는 경우는 남지가 않는데... 대신 하나만 남을 수 있다.
             prev_node = q[-1]
             stack.append((del_node, prev_node))  # 내가 삭제된 녀석
             return
@@ -38,9 +32,7 @@ def solution(n, k, cmds):
             prev_index = q.index(
                 prev_node
             )  # 여기서 시간을 꽤 잡아먹을까?... 이것을 위해서 q에서 현재 인덱스를 다 저장한다면 이동할때마다 수정해줘야하는 번거로움이 있다... 이건 아웃
-            q.insert(
-                (prev_index + 1) % len(q), del_node
-            )  # 이것도 꽤 시간을 잡아먹을텐데?
+            q.insert((prev_index + 1) % len(q), del_node)  # 이것도 꽤 시간을 잡아먹을텐데?
             return
 
     q = deque([i for i in range(n)])  # 제일 앞에 있는 녀석이 현 위치.
@@ -77,9 +69,7 @@ def solution1(n, k, cmds):
             pos, move = cmd.split(" ")
             q.rotate(-int(move))
         elif cmd[0] == "C":
-            if (
-                q[0] > q[1]
-            ):  # 이 조건이면 마지막 행인 것을 충족하는 가? 행은 항상 위에서 아래로 커질꺼야
+            if q[0] > q[1]:  # 이 조건이면 마지막 행인 것을 충족하는 가? 행은 항상 위에서 아래로 커질꺼야
                 del_node = q.popleft()
                 prev_node = q[-1]
                 stack.append((del_node, prev_node))
@@ -127,9 +117,7 @@ def solution2(n, k, cmds):
         def __repr__(self):
             return self.__str__()
 
-    def operate(
-        cmd, table, point, stack
-    ):  # point는 지역변수로써 주소값을 참고하지 않고 있다.
+    def operate(cmd, table, point, stack):  # point는 지역변수로써 주소값을 참고하지 않고 있다.
         if cmd[0] == "D":
             # point가 아래로 내려가야 한다.
             for _ in range(int(cmd[-1])):
@@ -193,9 +181,7 @@ def solution3(n, point, cmds):
             self.prev = prev
             self.next = next
 
-    def operate(
-        cmd, table, point, stack
-    ):  # point는 지역변수로써 주소값을 참고하지 않고 있다.
+    def operate(cmd, table, point, stack):  # point는 지역변수로써 주소값을 참고하지 않고 있다.
         if cmd[0] == "D":
             # point가 아래로 내려가야 한다.
             for _ in range(int(cmd[-1])):
@@ -322,12 +308,3 @@ def solution4(n, point, cmds):
 print(
     solution2(8, 2, ["D 2", "C", "U 3", "C", "D 4", "C", "U 2", "Z", "Z", "U 1", "C"])
 )
-
-
-def solution5(n, k, cmds):
-
-    pass
-
-
-# 어떤 자료구조를 사용해야 할까?
-# 연결리스트 말고는 할 수 있는 것이 없는것 같은데...
