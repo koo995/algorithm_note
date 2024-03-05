@@ -52,3 +52,23 @@ print(solution2([3, 0, 6, 1, 5, 0, 2, 2, 2, 4, 5, 64, 4, 4, 5]))
 
 # 어라 저런 문법이 있다고...?
 # enumerate에 매개변수로 start을 줄 수 있구나
+
+
+def solution4(citations):
+    # 어쨋든 완전탐색을 가도... 천만 정도니까... 할만한데?
+    h_index = 0
+    n = len(citations)
+    for h in range(int(1e4)):
+        upper_count = 0
+        lower_count = 0
+        for citation in citations:
+            if citation >= h:
+                upper_count += 1
+            else:
+                lower_count += 1
+        if upper_count >= h and lower_count <= h:
+            h_index = max(h_index, h)
+    return h_index
+
+
+# 예전에는 이문제를 어떻게 가야할지도 모르겠던데... 지금은 그래도 그냥 모두 탐색해도 될것같다는 생각이 들었다..
