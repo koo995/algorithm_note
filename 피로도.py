@@ -35,7 +35,7 @@ def solution(k, dungeons):
     return dfs([], [i for i in range(len(dungeons))])
 
 
-print(solution(80, [[80, 20], [50, 40], [30, 10]]))
+# print(solution(80, [[80, 20], [50, 40], [30, 10]]))
 
 # current_fatigue가 업데이트가 안되니까 무한루프에 빠지는구나
 # 그 이유는 던전 index을 계속 같은녀석을 반복하는데...
@@ -76,3 +76,78 @@ def solution1(k, dungeons):
 
 
 # 이 방법을 사용하면 각 재귀 호출마다 `dungeon_order_lst`의 독립적인 복사본을 사용하게 되어, 원본 리스트가 다른 재귀 호출에 의해 변경되지 않습니다.
+
+
+def solution2(k, dungeons):
+    N = len(dungeons)
+
+    def dfs(count, current_k: int, visited: list) -> int:
+        # 모든것을 다 탐험한 경우
+        # 여기 이 부분이 문제였다... 그러나....
+        # 여기서 왜 넘겨받은 count의 값이 잘못된거지?
+        # count = visited.count(1)
+        # 아래의 값이 방문한 값과 다르다는 것 아닌가? 그렇지.... 이런식으로 구현하면 마지막레이어의 그전 레이어는 항상 값이 계속 더해지는 결과를 가지게 될꺼야... 다음 재귀의 값이...
+        # 그렇다면 count라는 변수를 유지하면서 문제를 해결할 방법은 무엇이냐? max_count라는 새로운 변수를 만들어서 재귀호출전의 함수에서 값을 유지시켜준다.
+        print("visited: ", visited, "count: ", count)
+        if count == N:
+            return count
+
+        max_count = count
+        for idx, dungeon in enumerate(dungeons):
+            if visited[idx] != 0:
+                continue
+            require_k, consume_k = dungeon
+            if current_k >= require_k:
+                n_visited = visited.copy()
+                n_visited[idx] = 1
+                max_count = max(
+                    max_count, dfs(count + 1, current_k - consume_k, n_visited)
+                )
+        return max_count
+
+    count = 0
+    visited = [0] * N
+    for idx, dungeon in enumerate(dungeons):
+        require_k, consume_k = dungeon
+        if k >= require_k:
+            n_visited = visited.copy()
+            n_visited[idx] = 1
+            count = max(count, dfs(1, k - consume_k, n_visited))
+    return count
+
+
+print(
+    solution2(170, [[80, 20], [50, 40], [30, 10], [10, 5], [24, 20], [10, 2], [90, 80]])
+)
+
+
+# 비트마스킹을 이용한 방법
+def solution3(k, dungeons):
+    N = len(dungeons)
+
+    def dfs(current_k: int, visited: int) -> int:
+        count = bin(visited).count("1") - 1
+        if count == N:
+            return count
+
+        for idx, dungeon in enumerate(dungeons):
+            if visited & 1 << idx != 0:
+                continue
+            require_k, consume_k = dungeon
+            if current_k >= require_k:
+                count = max(count, dfs(current_k - consume_k, visited | 1 << idx))
+        return count
+
+    # visited을 비트마스킹을 사용해볼까? 정수는 불변객체니까 새롭게 리스트의 복제본을 전달할 필요도 없을것이다.
+    visited = 1 << N
+    count = 0
+    for idx, dungeon in enumerate(dungeons):
+        require_k, consume_k = dungeon
+        if k >= require_k:
+            count = max(count, dfs(k - consume_k, visited | 1 << idx))
+
+    return count
+
+
+# 어라? 틀리는 이유가 뭐지? current_k - consume_k을 해야하는데 k - ~로 해버렸네...
+# 그나저나 solution2의 틀리는 이유가 뭐지? 제발 파악하자.
