@@ -34,3 +34,4 @@ class Solution:
         while rev and rev.val == slow.val:
             slow, rev = slow.next, rev.next
         return not rev
+
