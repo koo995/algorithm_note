@@ -1,3 +1,6 @@
+from collections import Counter
+
+
 def solution(str1, str2):
     def calc_jaccard(lst1: list, lst2: list) -> int:
         from collections import Counter
@@ -20,21 +23,22 @@ def solution(str1, str2):
                 down += count_2
         return int(up / down * 65536) if down > 0 else 1
 
+    # 자기전에 들었던 생각인데.. 이렇게 하니까 훨씬 깔끔하네
+    def calc_jaccard_2(lst1: list, lst2: list) -> int:
+        lst1_set, lst2_set = set(lst1), set(lst2)
+        lst1_count, lst2_count = Counter(lst1), Counter(lst2)
+        gyo_set, hap_set = lst1_set & lst2_set, lst1_set | lst2_set
+        gyo_point = sum([min(lst1_count[s], lst2_count[s]) for s in gyo_set])
+        hap_point = sum([max(lst1_count[s], lst2_count[s]) for s in hap_set])
+        return int(gyo_point / hap_point * 65536) if hap_point > 0 else 65536
+
     def to_multiset(s: str) -> list:
         n = len(s)
-        lst = []
-        for idx, ch in enumerate(s[:-1]):
-            if not ch.isalpha():
-                continue
-            ch = ch.lower()
-            if s[idx + 1].isalpha():
-                lst.append(ch + s[idx + 1].lower())
-        return lst
+        return [ch.lower() + s[idx + 1].lower() for idx, ch in enumerate(s[:-1]) if
+                ch.isalpha() and s[idx + 1].isalpha()]
 
     str1_multiset = to_multiset(str1)
     str2_multiset = to_multiset(str2)
-    print(str1_multiset)
-    print(str2_multiset)
     return calc_jaccard(str1_multiset, str2_multiset)
 
 
@@ -66,11 +70,11 @@ def solution2(str1, str2):
 def solution3(str1, str2):
     from collections import Counter
     # make sets
-    s1 = [str1[i:i+2].lower() for i in range(len(str1)-1) if str1[i:i+2].isalpha()]
-    s2 = [str2[i:i+2].lower() for i in range(len(str2)-1) if str2[i:i+2].isalpha()]
+    s1 = [str1[i:i + 2].lower() for i in range(len(str1) - 1) if str1[i:i + 2].isalpha()]
+    s2 = [str2[i:i + 2].lower() for i in range(len(str2) - 1) if str2[i:i + 2].isalpha()]
     if not s1 and not s2:
         return 65536
     c1 = Counter(s1)
     c2 = Counter(s2)
-    answer = int(float(sum((c1&c2).values()))/float(sum((c1|c2).values())) * 65536)
+    answer = int(float(sum((c1 & c2).values())) / float(sum((c1 | c2).values())) * 65536)
     return answer
