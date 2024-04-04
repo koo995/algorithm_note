@@ -48,7 +48,9 @@ def solution1(distance, rocks, n):
     left = 0
     right = distance
     while left <= right:
-        mid = int((left + right) / 2)  # mid 이 녀석을 어쨋든 최소로 잡고싶어 하는 것이지?
+        mid = int(
+            (left + right) / 2
+        )  # mid 이 녀석을 어쨋든 최소로 잡고싶어 하는 것이지?
         cnt = 0
         rock_point = 0
         # 어쨋든 간에 모든 거리에 대해서 하나하나 확인해 나간다?
@@ -57,7 +59,9 @@ def solution1(distance, rocks, n):
                 cnt += 1
             else:  # 여기 이 부분이 내가 생각하지 못한 부분이구나?
                 rock_point = sorted_rocks[i]
-        if cnt > n:  # 여기서 1로 두는 것도 음... 등호를 안쓰고 종료조건을 저렇게 만들어나가나?
+        if (
+            cnt > n
+        ):  # 여기서 1로 두는 것도 음... 등호를 안쓰고 종료조건을 저렇게 만들어나가나?
             right = mid - 1
         else:
             left = mid + 1
@@ -65,10 +69,41 @@ def solution1(distance, rocks, n):
     return answer
 
 
-print(solution1(25, [2, 14, 11, 21, 17], 2))
-print(solution1(28, [2, 9, 14, 11, 21, 17, 20], 4))
+# print(solution1(25, [2, 14, 11, 21, 17], 2))
+# print(solution1(28, [2, 9, 14, 11, 21, 17, 20], 4))
 
 """
 만약에 돌멩이 사이의 거리를 최소한 x 이상만큼 만들기 위해서 최소한으로 제거해야하는 돌멩이의 개수는 몇개인가?"
 ( 또는 "점프력이 x 미만인 사람은 못건너게 할 때 최소한으로 제거해야하는 돌멩이의 개수는 몇개인가? " 라고 생각해도 좋습니다)
 """
+
+
+def solution2(distance, rocks, n):
+    rocks.sort()
+    rocks.append(distance)
+
+    def binary_search(start, end) -> int:
+        mid = (start + end) // 2
+        if start >= end:
+            return mid
+        cnt = 0
+        rock_point = 0
+        for i in range(len(rocks)):
+            if rocks[i] - rock_point < mid:
+                cnt += 1
+            else:
+                rock_point = rocks[i]
+        if cnt < n:
+            mid = binary_search(mid + 1, end)
+        else:
+            mid = binary_search(start, mid)
+
+        return mid
+
+    start = 0
+    end = distance
+    mid = binary_search(start, end)
+    print("mid: ", mid)
+
+
+print(solution2(25, [2, 14, 11, 21, 17], 2))
