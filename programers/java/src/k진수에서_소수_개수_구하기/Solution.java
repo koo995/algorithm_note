@@ -1,7 +1,5 @@
 package k진수에서_소수_개수_구하기;
 
-import java.util.*;
-
 class Solution {
     public int solution(int n, int k) {
         // 먼저 n을 k 진수로 바꿔볼까?

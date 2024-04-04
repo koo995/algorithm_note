@@ -1,6 +1,5 @@
 package n진수게임;
 
-import java.util.*;
 
 class Solution {
     public String solution(int n, int t, int m, int p) {
