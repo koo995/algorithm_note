@@ -5,79 +5,38 @@ import java.util.stream.*;
 
 class Solution {
     public int[] solution(int[] fees, String[] records) {
+        final int ENDTIME = 23 * 60 + 59;
         int defaultTime = fees[0];
         int defaultFee = fees[1];
         int unitTime = fees[2];
         int unitFee = fees[3];
-
-        Map<String, Car> carNumMap = new HashMap<>();
-
+        Map<String, Integer> carTotalMap = new HashMap<>();
         for (String record : records) {
-            int time = 60 * Integer.parseInt(record.substring(0,2)) + Integer.parseInt(record.substring(3, 5));
-            String carNum = record.substring(6, 10);
+            int time = 60 * Integer.parseInt(record.substring(0,2)) + Integer.parseInt(record.substring(3,5));
+            String carName = record.substring(6, 10);
             String status = record.substring(11);
             if (status.equals("IN")) {
-                if (!carNumMap.containsKey(carNum)) {
-                    carNumMap.put(carNum, new Car(time));
-                } else { // 한번 들어왔던 녀석이라면
-                    Car car = carNumMap.get(carNum);
-                    car.setInTime(time);
+                if (!carTotalMap.containsKey(carName)) {
+                    carTotalMap.put(carName, ENDTIME - time);
+                } else {
+                    carTotalMap.replace(carName, carTotalMap.get(carName) + ENDTIME - time);
                 }
             } else {
-                Car car = carNumMap.get(carNum);
-                car.setOutTime(time);
+                carTotalMap.replace(carName, time - ENDTIME + carTotalMap.get(carName));
             }
         }
-        List<String> keyList = new ArrayList<>(carNumMap.keySet());
-        keyList.sort((i1, i2) -> i1.compareTo(i2));
         List<Integer> answer = new ArrayList<>();
-        for (String key : keyList) {
-            Car car = carNumMap.get(key);
-            int totalTime = car.getTotalTime();
-            if (totalTime >= defaultTime) {
-                int fee = (int) (defaultFee + Math.ceil((totalTime - defaultTime) / (double) unitTime) * unitFee);
-                answer.add(fee);
+        List<String> keys = new ArrayList<>(carTotalMap.keySet());
+        keys.sort((s1, s2) -> s1.compareTo(s2));
+        for (String key: keys) {
+            int total = carTotalMap.get(key);
+            if (total > defaultTime) {
+                answer.add(defaultFee + ((int) Math.ceil((double)(total - defaultTime)/unitTime)) * unitFee);
                 continue;
             }
             answer.add(defaultFee);
         }
         return answer.stream().mapToInt(i -> i).toArray();
-    }
-
-    static class Car {
-        int inTime;
-        int outTime = 23 * 60 + 59;
-        int totalTime = 0;
-
-        public Car(int inTime) {
-            this.inTime = inTime;
-            this.totalTime = calcTotalTime();
-        }
-
-        public void setOutTime(int outTime) {
-            this.outTime = outTime;
-            this.totalTime = calcTotalTime();
-        }
-
-        public void setInTime(int inTime) {
-            // 새롭게 인타입을 정한다면 기존의 토탈타입을 정하고 거기에 새롭게 디폴트로 더해나가야 한다.
-            this.inTime = inTime;
-            this.outTime = 23 * 60 + 59;
-            this.totalTime = totalTime + calcTotalTime();
-        }
-
-        public int getTotalTime() {
-            return totalTime;
-        }
-
-        public int calcTotalTime() {
-            return outTime - inTime;
-        }
-
-        @Override
-        public String toString() {
-            return "{" + "inTime: " + inTime + ", outTime: " +outTime + ", totalTime: " + totalTime + "}";
-        }
     }
 }
 
