@@ -1,31 +1,16 @@
 def solution(lottos, win_nums):
-    from itertools import combinations
-    
-    def num_generator(lottos):
-        for i in range(1, 46):
-            if i not in lottos:
-                yield i
-    
-    
     win_count = {6:1, 5:2, 4:3, 3:4, 2:5, 1:6, 0:6}
-    # 기존에는 몇개가 일치하는지 세어보자.
-    matching_count = 0
-    max_count = 0
-    min_count = 6
-    for num in lottos:
-        if num in win_nums:
-            matching_count += 1
     zero_count = lottos.count(0)
-    num_comb_set = set(combinations(num_generator(lottos), zero_count))
-    for num_comb in num_comb_set:
-        temp = matching_count
-        for num in num_comb:
-            if num in win_nums:
-                temp += 1
-        max_count = max(max_count, temp)
-        min_count = min(min_count, temp)
-    print("max: ", max_count, "min: ", min_count)
-    return [win_count[max_count], win_count[min_count]]
+    lottos = set(lottos)
+    win_nums = set(win_nums)
+    cha_set = win_nums - lottos
+    prev_matching_count = len(win_nums) - len(cha_set)
+    max_matching_count = prev_matching_count + (len(cha_set) if zero_count >= len(cha_set) else zero_count)
+    
+    return [win_count[max_matching_count], win_count[prev_matching_count]]
 
 
 print(solution([0, 0, 0, 0, 0, 0], [38, 19, 20, 40, 15, 25]))
+
+# 시간복잡도를 고려안하고 풀었더니... 시간초과가 걸렸다. 최대 800만의 조합이 나올 수 있고... 하나당 6개니까... 4800만...
+# 거기다 조합을 구하는 과정도 어마어마할 것이다.
