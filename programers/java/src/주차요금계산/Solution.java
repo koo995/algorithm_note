@@ -1,7 +1,6 @@
 package 주차요금계산;
 
 import java.util.*;
-import java.util.stream.*;
 
 class Solution {
     public int[] solution(int[] fees, String[] records) {
