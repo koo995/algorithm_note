@@ -1,150 +1,59 @@
 def solution():
-    from collections import defaultdict
-    
-    N = int(input())
-    infos = [map(int, input().split()) for _ in range(N*N)]
-    scores = {0:1, 1:1, 2:10, 3:100, 4:1000}
-    table = [[0] * N for _ in range(N)]
-    student_point = defaultdict(tuple)
-    dx = [1, -1, 0, 0]
-    dy = [0, 0, 1, -1]
-    
-    def find_seat1(a, b, c, d) -> list[tuple[int]]:
-        tmp = [[0] * N for _ in range(N)]
-        max_value = -1
+    def find_seat(*prefer_friends):
+        table_cond_info = []
         for y in range(N):
             for x in range(N):
-                # 누군가가 앉아 있다면 제외한다.
+                # 현 위치가 비어있지않다면 제외
                 if table[y][x] != 0:
                     continue
-                # 특정 자리에서 주변을 살핀다.
-                for idx in range(4):
-                    if not (0 <= y + dy[idx] < N and 0 <= x + dx[idx] < N):
+                # 각 칸마다 인접한 칸들을 확인한다. 현 위치에서 인접한 칸에 비어있는 녀석은 몇개인지, 좋아하는 녀석은 몇명인지 판단한다.
+                prefer_count, empty_count = 0, 0
+                for i in range(4):
+                    # 테이블범위를 넘어가면 제외
+                    n_y = y + dy[i]
+                    n_x = x + dx[i]
+                    if not (0 <= n_y < N and 0 <= n_x < N):
                         continue
-                    if table[y + dy[idx]][x + dx[idx]] in [a, b, c, d]:
-                        tmp[y][x] += 1
-                        max_value = max(max_value, tmp[y][x])
-        # 이제 맥스 값에 해당하는 자리들을 찾는다.
-        # 하지만 하나도 해당되는 녀석이 없어서 -1 그대로라면?
-        answer = []
-        for y in range(N):
-            for x in range(N):
-                if max_value == -1:
-                    if table[y][x] == 0:
-                        answer.append((y, x))
-                    continue
-                if tmp[y][x] == max_value:
-                    answer.append((y, x))
-        return answer
-        
-    def find_seat2(ss) -> list[tuple[int]]:
-        answer = []
-        max_value = -1
-        # ss에 있는 후보들 중에서 인접한 칸 중에서 비어있는 칸이 가장 많은 칸을 넘긴다.
-        for s in ss:
-            # 위치 s에 대해서 인접한 칸에 비어있는 칸이 몇개인지 확인해보자
-            y, x = s
-            count = 0
-            for idx in range(4):
-                if not (0 <= y + dy[idx] < N and 0 <= x + dx[idx] < N):
-                    continue
-                if table[y + dy[idx]][x + dx[idx]] == 0:
-                    count += 1
-            if count > max_value:
-                max_value = count
-                answer.clear()
-            if count == max_value:
-                answer.append(s)
-        return answer
+                    # 인접한 칸이 비어있다면 카운팅해준다.
+                    if table[n_y][n_x] == 0:
+                        empty_count += 1
+                        continue
+                    # 인접한 칸에 좋아하는 사람이 있다면 카운팅해준다.
+                    if table[n_y][n_x] in prefer_friends:
+                        prefer_count += 1
+                table_cond_info.append((prefer_count, empty_count, y, x)) # 좋아하는 사람이 몇명인지, 빈자리는 몇명인지 현위치 정보 저장
+        table_cond_info.sort(key=lambda info:(-info[0], -info[1], info[2], info[3]))
+        # 정렬을 했는데... 여기서 어떻게 한 자리를 정하지? 기본적으로 400개가 정렬이 되었을 것이다. 그렇지.. 제일 첫 녀석이 이것을 만족하는 녀석이겠지
+        return (table_cond_info[0][2], table_cond_info[0][3])
     
-    def find_seat3(ss) -> tuple[int]:
-        ss.sort(key = lambda s:(s[0], s[1]))
-        return ss
-    
-    friend_dic = {}
-    for idx, info in enumerate(infos.copy()):
-        stu, f1, f2, f3, f4 = info
-        friend_dic[stu] = [f1, f2, f3, f4]
-        if idx == 0:
-            table[1][1] = stu
-            student_point[stu] = (1,1)
-            continue
-        seats = find_seat1(f1, f2, f3, f4)
-        if len(seats) > 1:
-            seats = find_seat2(seats.copy())
-        if len(seats) > 1:
-            seats = find_seat3(seats.copy())
-        s = seats.pop(0)
-        table[s[0]][s[1]] = stu
-        student_point[stu] = s
-    total_score = 0    
-    
+    N = int(input())
+    prefer_infos = [list(map(int, input().split())) for _ in range(N**2)]
+    prefer_infos_dic = {}
+    table = [[0] * N for _ in range(N)] # N * N 테이블의 자리배치를 기록한다.
+    score_dic = {0:0, 1:1, 2:10, 3:100, 4:1000}
+    dx = [1, -1, 0, 0]
+    dy = [0, 0, 1, -1]
+    # 먼저 학생 한명한명 자리를 정해나가야겠다.
+    for s, f1, f2, f3, f4 in prefer_infos: # 최대 400 이다.
+        prefer_infos_dic[s] = (f1, f2, f3, f4)
+        # 여기서 table을 모두 탐색할까? 그리고 4방향도 모두 탐색? 그러면 최대 1600이다. 400 * 1600 = 640000 이면 할만한데?
+        y, x = find_seat(f1, f2, f3, f4)
+        table[y][x] = s
+    total_score = 0
     for y in range(N):
         for x in range(N):
+            s = table[y][x]
             count = 0
-            for idx in range(4):
-                if not (0 <= y + dy[idx] < N and 0 <= x + dx[idx] < N):
+            # 인접한 테이블을 확인한다.
+            for i in range(4):
+                n_y = y + dy[i]
+                n_x = x + dx[i]
+                if not (0 <= n_y < N and 0 <= n_x < N):
                     continue
-                if table[y + dy[idx]][x + dx[idx]] in friend_dic[table[y][x]]:
+                if table[n_y][n_x] in prefer_infos_dic[s]:
                     count += 1
-            total_score += scores[count]
+            total_score += score_dic[count]
     print(total_score)
     
-def solution2():
-    n = int(input())
-    data = [[0] * n for _ in range(n)]
-    students = [list(map(int, input().split())) for _ in range(n**2)]
-
-    dx = [-1, 1, 0, 0]
-    dy = [0, 0, -1, 1]
-
-    for student in students:
-        available = []
-
-        for i in range(n):
-            for j in range(n):
-                # 빈자리가 있다면
-                if data[i][j] == 0:
-                    prefer, empty = 0, 0
-                    
-                    # 동서남북 방향 확인하여 
-                    for k in range(4):
-                        nx = i + dx[k]
-                        ny = j + dy[k]
-                        
-                        # 범위내에 있을 때
-                        if 0 <= nx < n and 0 <= ny < n:
-                            # 좋아하는 학생이 주위에 있다면 더해준다.
-                            if data[nx][ny] in student[1:]:
-                                prefer += 1
-                                
-                            # 빈자리가 있다면 더해준다.
-                            if data[nx][ny] == 0:
-                                empty += 1
-
-                    available.append((i, j, prefer, empty))
-        # 정렬
-        available.sort(key= lambda x: (-x[2], -x[3], x[0], x[1]))
-        data[available[0][0]][available[0][1]] = student[0]
-
-    answer = 0
-    score = [0, 1, 10, 100, 1000]
-    students.sort()
-
-    for i in range(n):
-        for j in range(n):
-            count = 0
-
-            for k in range(4):
-                nx = i + dx[k]
-                ny = j + dy[k]
-
-                if 0 <= nx < n and 0 <= ny < n:
-                    if data[nx][ny] in students[data[i][j] - 1]:
-                        count += 1
-
-            answer += score[count]
-
-    print(answer)
-
-    solution()
+    
+solution()
