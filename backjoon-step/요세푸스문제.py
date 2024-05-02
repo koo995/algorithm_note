@@ -12,3 +12,7 @@ def solution():
 
 
 solution()
+N, K = map(int, input())
+scores = list(map(int, input().split()))
+scores.sort(reverse=True)
+print(scores[k-1])
