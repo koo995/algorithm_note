@@ -11,5 +11,12 @@ def solution():
     nums = [list(map(int, input().split())) for _ in range(T)]
     for a, b in nums:
         print(get_min_mul(a, b))
+        
+def solution2():
+    import math
     
-solution()
+    a, b = map(int, input().split())
+    max_yak = math.gcd(a, b)
+    print(a * b // max_yak)
+    
+solution2()
