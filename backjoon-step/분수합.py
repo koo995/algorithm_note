@@ -13,4 +13,4 @@ def solution():
         b = b // common_yak
     print(a, b)
 
-solution()
+solution() 
