@@ -6,21 +6,31 @@ def solution():
     # 한번에 프린트가 아닌... 프린트할 결과값을 어디다 저장할까?
     # 빈칸은 다른 무언가로 대체하자
     
-    def replace_empty(n):
-        if n == 1: # 가운데에 비는것을 어떻게 처리할까? 그리고 높이도 어떻게 처리할까?
-            # 가운데를 비운다를 어떻게 가지?
-            # 이 위치의 녀석을 공백으로 환한다...
-            pass
-        # 만약에 N 이 들어온다면...
+    def star(n):
+        if n == 3 :
+            # 우선 여기에 2차원에 왜 슬라이싱이 들어가는지... 아아... 일단 제일 첫 녀석은 이모양이니까... 
+            print_map[0][:3] = print_map[2][:3] = [1]*3
+            print_map[1][:3] = [1, 0, 1]
+            return
+        
+        a = n // 3
+        star(n//3) # 여기서 재귀를 먼저 실행한다는 것이 분할정복인가... 아래서 전부 합치나 본데?
         for i in range(3):
             for j in range(3):
                 if i == 1 and j == 1:
-                    # 이 부분이 완전히 비워져야하는데?
-                    replace_empty(n//3)
-        
-        pass
-    print_stack = [[" "] * N for _ in range(N)] # N개 이면 N줄이 있겠지?
-    print(print_stack)
-    replace_empty(N)
+                    continue
+                for k in range(a):# 복사해야할 패턴의 크기로 봐도 되겠군
+                    print_map[a * i + k][a * j:a * (j + 1)] = print_map[k][:a]
+    
+    print_map = [[0] * N for _ in range(N)] # N개 이면 N줄이 있겠지?
+    star(N)
+    for i in print_map :
+        for j in i :
+            if j :
+                print('*', end = '')
+            else :
+                print(' ', end = '')
+        print()
+    
 
 solution()
