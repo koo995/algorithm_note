@@ -40,11 +40,9 @@ def solution2():
         if i == "0":
             break
         N, *heights = map(int, i.split())
-
         # 스택과 최대 직사각형 넓이를 저장할 변수를 초기화합니다.
         stack = []
         max_result = -math.inf
-
         for v2, height in enumerate(heights, start=1):
             # 스택의 가장 위쪽 막대기보다 현재 막대기의 높이가 작으면
             if stack and stack[-1][1] > height:
@@ -52,13 +50,13 @@ def solution2():
                     _, stack_height = stack.pop()
                     v1 = 1
                     if stack:
-                        v1 = stack[-1][0]+1
+                        v1 = stack[-1][0] + 1
                     result = (v2 - v1) * stack_height
                     max_result = max(result, max_result) # 최대값 갱신
                     # 스택에 들어있는 막대 중에서 현재 막대의 길이보다 큰 것들만 꺼내서 계산합니다.
             stack.append((v2, height))  # 스택에 현재 막대기를 추가합니다.
 
-        # 반복이 종료되고, 스택에 남은 막대기가 있다면 계산합니다.
+        # 반복이 종료되고, 스택에 남은 막대기가 있다면 계산합니다. 이 부분에서 또 stack을 한번더 고려하지 못하였다.
         while stack:
             _, stack_height = stack.pop()
             v1 = 1
@@ -70,3 +68,37 @@ def solution2():
         # 최대 직사각형 넓이를 출력합니다.
         print(max_result)
 solution2()
+
+
+def solution3():
+    import math
+
+    N= int(input())
+    heights = [int(input()) for _ in range(N)]
+    # 스택과 최대 직사각형 넓이를 저장할 변수를 초기화합니다.
+    stack = []
+    max_result = -math.inf
+    for v2, height in enumerate(heights, start=1):
+        # 스택의 가장 위쪽 막대기보다 현재 막대기의 높이가 작으면
+        if stack and stack[-1][1] > height:
+            while stack and stack[-1][1] > height:  # 스택에서 빼내며 최대 직사각형 넓이를 계산합니다.
+                _, stack_height = stack.pop()
+                v1 = 1
+                if stack:
+                    v1 = stack[-1][0] + 1
+                result = (v2 - v1) * stack_height
+                max_result = max(result, max_result) # 최대값 갱신
+                # 스택에 들어있는 막대 중에서 현재 막대의 길이보다 큰 것들만 꺼내서 계산합니다.
+        stack.append((v2, height))  # 스택에 현재 막대기를 추가합니다.
+
+    # 반복이 종료되고, 스택에 남은 막대기가 있다면 계산합니다. 이 부분에서 또 stack을 한번더 고려하지 못하였다.
+    while stack:
+        _, stack_height = stack.pop()
+        v1 = 1
+        if stack:
+            v1 = stack[-1][0]+1
+        result = (N+1 - v1) * stack_height
+        max_result = max(result, max_result) # 최대값 갱신
+
+    # 최대 직사각형 넓이를 출력합니다.
+    print(max_result)
