@@ -8,7 +8,7 @@ def solution():
     K, N = map(int, input().split()) # 가지고 있는 K개의 랜선 (10000이하), 필요한 N개의 랜선 (100만 이하) K <= N
     lines = [int(input()) for _ in range(K)] # line 하나의 길이는 최대 2^31.. 어마어마한 길이다
     lines.sort()
-    max_len = lines[-1] # 잠시만... 여기가 문제 같은데?
+    max_len = lines[-1] + 1 # 잠시만... 여기가 문제 같은데?
     min_len = 1
     while min_len + 1 < max_len: # 이렇게 조건을 잡으면 반드시 min < mid < max 가 이루어진다.
         mid_len = (min_len + max_len) // 2
