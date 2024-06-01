@@ -102,8 +102,49 @@ def solution2(distance, rocks, n):
 
     start = 0
     end = distance
-    mid = binary_search(start, end)
-    print("mid: ", mid)
+    while start + 1 < end:
+        mid = (start + end) // 2
+        cnt = 0
+        rock_point = 0
+        for i in range(len(rocks)):
+            if rocks[i] - rock_point < mid:
+                cnt += 1
+            else:
+                rock_point = rocks[i]
+        if cnt < n:
+            start = mid
+        else:
+            end = mid
+    return start
+
+
+def solution3(distance, rocks, n):
+    if n >= len(rocks):
+        return distance
+    
+    rocks.sort()
+    rocks.append(distance)
+
+    start = 1
+    end = distance
+    while start + 1 < end:
+        mid = (start + end) // 2
+        cnt = 0
+        rock_point = 0
+        for r in rocks:
+            if r - rock_point < mid:
+                cnt += 1
+            else:
+                rock_point = r
+        if cnt <= n: # 여기서 mid 일때와 start 일때 결과가 같나? start 일때 매우 작을 것이다. mid 일때 도 n 보다 작다면?
+            start = mid
+        else:
+            end = mid
+    return start
+    
+    
+    # mid = binary_search(start, end)
+    # print("mid: ", mid)
 
 
 print(solution2(25, [2, 14, 11, 21, 17], 2))
