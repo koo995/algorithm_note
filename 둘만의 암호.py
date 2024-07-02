@@ -44,4 +44,25 @@ def solution2(text, skip, index):
     return result
 
 
+def solution3(text: str, skip: str, index: int):
+    def move(ch: str, index: int) -> str:
+        from_ord = ord("a")
+        end_ord = ord("z")
+        ch_ord = ord(ch)
+        while index != 0:
+            ch_ord += 1
+            if ch_ord > end_ord:
+                ch_ord = from_ord
+            if chr(ch_ord) in skip:
+                continue
+            index -= 1
+        return chr(ch_ord)
+
+    result = ""
+    for ch in text:
+        result += move(ch, index)
+    return result
+
+
+
 print(solution2("aukks", "wbqd", 5))
