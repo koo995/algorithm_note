@@ -89,6 +89,35 @@ def solution2(n, costs: list):
     return total_cost
 
 
+def solution3(n, costs: list):
+    def find_parent(node):
+        if node == parent_table[node]:
+            return node
+        parent_table[node] = find_parent(parent_table[node])
+        return parent_table[node]
+
+    def union(n1, n2):
+        p1 = find_parent(n1)
+        p2 = find_parent(n2)
+        if p1 == p2:
+            return False
+        else:
+            if p1 > p2:
+                parent_table[p1] = p2
+            else:
+                parent_table[p2] = p1
+            return True
+
+    costs.sort(key=lambda cost: cost[2])
+    parent_table = [i for i in range(n)]
+    total_cost = 0
+    for node1, node2, cost in costs:
+        # node1 과 node2을 같은 집합에 포합시켜야 한다.
+        if union(node1, node2):
+            total_cost += cost
+    return total_cost
+
+
 print(solution2(4, [[0, 1, 1], [0, 2, 2], [1, 2, 5], [1, 3, 1], [2, 3, 8]]))
 print(
     solution2(
