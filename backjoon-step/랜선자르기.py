@@ -27,3 +27,23 @@ def solution():
 solution()
 
 # 문제를 살짝 바꿔서, 개수가 N보다 작게 되는 최소 길이를 구한다고 하겠습니다. 거기서 1을 빼면 원래 문제의 답이 됩니다.
+
+def solution2():
+    def check(m: int) -> int: # 만들 수 있는 랜선의 갯수라하자.
+        count = 0
+        for l in len_lst:
+            count += l // m
+        return count
+
+    K, N = map(int, input().split())
+    len_lst = [int(input()) for _ in range(K)]
+    s = 1
+    e = int(3e9)
+    while s + 1 < e:
+        mid = (s + e) // 2
+        if check(mid) >= N:
+            s = mid
+        else:
+            e = mid
+
+    pass
