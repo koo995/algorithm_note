@@ -21,4 +21,25 @@ def solution():
     print(e)
 
 
+def solution2():
+    def check(m):
+        count = 0
+        for i in range(1, n + 1):
+            count += min(n, m // i)
+        return count
+
+    n = int(input())
+    k = int(input())
+    start = 0
+    end = n ** 2
+    while start + 1 < end:
+        mid = (start + end) // 2
+        if check(mid) <= k:  # 이런식으로 하면 mid 값에 해당하는 녀석이 여러개 있을 수 있어서. 단순히 mid 가 k 번째 수인지 구하기 어렵다.
+            start = mid
+        else:
+            end = mid
+    print(start)
+
+
+
 solution()
