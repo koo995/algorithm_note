@@ -146,6 +146,31 @@ def solution4(jobs: list):
     return sum(total_times) // len(total_times)
 
 
+import heapq
+
+
+# 리스트에서 pop(0) 은 시간복잡도가 n 에 이른다...
+def solution5(jobs: list):
+    # 정확하게는 작업을 하고있는 동안에 들어온 녀석들은 짧은 녀석을 먼저 처리하면 되겠다.
+    jobs.sort(reverse=True)  # 이렇게하면 시작시간이 작고, 시작시간이 같다면 소요시간이 작은 녀석이 뒤에 올 것이다.
+    n = len(jobs)
+    cur_time = jobs[-1][0]
+    total_time = 0
+    q = []
+    # 생각해보니까 jobs의 시간이 아직 다 안되었고 작업큐가 비어있을 수 있다.
+    while q or jobs:
+        if q:
+            duration_time, request_time = heapq.heappop(q)
+            cur_time += duration_time
+            total_time += cur_time - request_time
+        else:
+            cur_time = jobs[-1][0]
+        while jobs and jobs[-1][0] <= cur_time:
+            request_time, duration_time = jobs.pop()
+            heapq.heappush(q, (duration_time, request_time))
+    return total_time // n
+
+
 print(solution4([[0, 3], [1, 9], [2, 6]]))
 # 자... 테스트 케이스 하나가 잘 안되고 있다. 뭐가 문제일까?
 # 오류는 시간초과이다. while문에서 문제가 발생했다고 좁히자. 1번째? 두번째? q가 있다면 반드시 뽑아낸다. 그렇다면 jobs의 존재에서 문제가 발생했다. 아 케이스 하나가 있겠다. jobs가 남아있는데 그녀석이 start_time보다 큰 경우일 것이다.
