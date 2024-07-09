@@ -97,3 +97,33 @@ def solution2(N, number):
 
 
 print(solution2(5, 12))
+
+
+def solution3(N, number):
+    dp = [10] * int(1e8)
+    s = [set() for _ in range(9)]  # s[2] 는 2개로 만들 수 있는 숫자들의 집합
+    for i in range(1, 9):
+        nn = int(str(N) * i)
+        s[i].add(nn)
+        dp[nn] = i
+
+    for n in range(2, 9):
+        # n개로 만들 수 있는 연산의 수는?
+        for i in range(1, n):
+            j = n - i
+            # 이제부터 s[a] 와 s[b] 집합간에 모든 사칙연산을 수행하자?
+            for a in s[i]:
+                for b in s[j]:
+                    s[n].add(a + b)
+                    if a - b >= 0:
+                        s[n].add(a - b)
+                    s[n].add(a * b)
+                    if b != 0:
+                        s[n].add(a // b)
+            for k in s[n]:
+                dp[k] = min(dp[k], n)
+    return dp[number] if dp[number] <= 8 else -1
+
+
+
+
