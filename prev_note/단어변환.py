@@ -111,4 +111,44 @@ def solution2(begin, target, words: list):
     return distance[target] if target in distance else 0
 
 
+
+
+def solution3(begin, target, words: list):
+    def is_one_diff(word1, word2):
+        n = len(word1)
+        diff_count = 0
+        for i in range(n):
+            if word1[i] != word2[i]:
+                diff_count += 1
+        return True if diff_count == 1 else False
+    from collections import defaultdict, deque
+    # 그렇다면... words 들중에서 한개의 변환으로 이동할 수 있는 루트를 다 찾아야겠는데?
+    # 그렇다면 1개만 차이난다는 것을 어떻게 판단할까?
+    words.append(begin)
+    words_size = len(words)
+    graph = defaultdict(list)
+    for i in range(words_size):
+        for j in range(i, words_size):
+            if is_one_diff(words[i], words[j]):
+                graph[words[i]].append(words[j])
+                graph[words[j]].append(words[i])
+    print(graph)
+    visited = {word: 0 for word in words}
+    # 자 이제 begin을 시작으로 가장 짧은 변환과정을 찾아야 한다.
+    # 다익스트라는 너무 쉬워보이니까.... bfs을 이용해볼까?
+    q = deque()
+    visited[begin] = 1
+    q.append((begin, 0))
+    while q:
+        cur_word, cur_count = q.popleft()
+        if cur_word == target:
+            return cur_count
+        for next_word in graph[cur_word]:
+            if visited[next_word]:
+                continue
+            visited[next_word] = 1
+            q.append((next_word, cur_count + 1))
+    return 0
+
+
 print(solution2("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"]))
