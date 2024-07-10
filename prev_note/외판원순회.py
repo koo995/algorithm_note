@@ -185,7 +185,35 @@ def solution4():
     result = dfs(start, visited | 1 << start)
     print(result)
 
+def solution5():
+    def dfs(node, visited):
+        # 종료조건은 무엇으로? 시작노드 포함 모든 노드를 다 탐색하였고, 현재 노드에서 시작노드로만 움직이면 되는 상황이다.
+        if visited == (1 << N) - 1:
+            if matrix[node][start] != 0:
+                return matrix[node][start]
+            else:  # 만약에 가는 길이 없다면...? 그렇지만 탐색했다는 해줘야하지 않나? 이 값이 최소비교를 당하니까... 기존의 값은 유지하기 위해 -1은 안되겠다.
+                return INF - 1
+        if dp[node][visited] != INF or dp[node][visited] != INF - 1:
+            return dp[node][visited]
 
-print(solution3())
+        for next_node in range(N):
+            if matrix[node][next_node] == 0 or (visited & (1 << next_node) != 0):
+                continue
+            dp[node][visited] = min(dp[node][visited], dfs(next_node, visited | (1 << next_node)) + matrix[node][next_node])
+
+        return dp[node][visited]
+
+    N = int(input())
+    matrix = [list(map(int, input().split())) for _ in range(N)]
+    # 이 매트릭스로 따로 그래프를 그릴 필요는 없겠는데?
+    INF = int(1e9)
+    # dp[현재위치][방문한상태]
+    dp = [[INF] * (1 << N) for _ in range(N)]
+    start = 0
+    visited = 0b0
+    print(dfs(0, visited | 1 << start))
+
+
+solution5()
 # 극단적인 케이스에 대해서 결국에 계산은 되지만 시간이 너무너무 많이 걸린다는 것이 문제였구나
 # 순환할수 없는 경우와 방문하지않은 경우는 분리를 해야 하는 거야
