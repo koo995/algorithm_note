@@ -31,3 +31,23 @@ def solution2(phone_book: list):
             if s in dic:
                 return False
     return True
+
+
+def solution3(phone_book: list):
+    def check_prefix(num1, num2):
+        s1 = len(num1)
+        s2 = len(num2)
+        if s1 < s2 and num2[:s1] == num1:
+            return True
+        return False
+
+    phone_book.sort()
+    start = 0
+    size = len(phone_book)
+    while start + 1 < size:
+        prev_number = phone_book[start]
+        next_number = phone_book[start + 1]
+        if check_prefix(prev_number, next_number):
+            return False
+        start += 1
+    return True
