@@ -1,3 +1,6 @@
+import math
+
+
 def solution():
     from string import ascii_uppercase
 
@@ -40,5 +43,26 @@ def solution2():
 
     print("answer: ", answer)
 
+def solution3():
+    from string import ascii_uppercase
 
-solution2()
+    letters = {i: i for i in range(10)}
+    for idx, ch in enumerate(ascii_uppercase, start=10):
+        letters[ch] = idx
+
+    N, B = input().split()  # 숫자 N이 B 진법으로 표현된다.
+    B = int(B)
+    N_lst = list(N)  # N의 각 자리마다 B^i값을 곱해나간다.
+    size = len(N_lst)
+    result = 0
+    for sub_N in N_lst:
+        # sub_N이 십진수로 무슨 값인지 알아야겠는데?
+        result += int(letters[sub_N] * math.pow(B, size - 1))
+        size -= 1
+    print(result)
+
+
+    pass
+
+
+solution3()
