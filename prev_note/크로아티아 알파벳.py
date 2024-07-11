@@ -37,5 +37,16 @@ def solution2():
         s = s.replace(ch, "*")
     print("s: ", s)
 
+def solution3():
+    cro_alpha = ["c=", "c-", "dz=", "d-", "lj", "nj", "s=", "z="]
 
-solution2()
+    word = input()
+    for alpha in cro_alpha:
+        word = word.replace(alpha, "*")
+    print(word)
+
+
+    pass
+
+
+solution3()
