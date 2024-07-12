@@ -149,5 +149,22 @@ def solution3(k, dungeons):
     return count
 
 
+def solution4(cur_fatigue, dungeons):
+    def dfs(fatigue, visited, count):
+        for i in range(n):
+            req_fatigue, consume_fatigue = dungeons[i]
+            if visited[i] == 1 or fatigue < req_fatigue:
+                continue
+            next_fatigue = fatigue - consume_fatigue
+            n_visited = visited.copy()
+            n_visited[i] = 1
+            counts.append(count + 1)
+            dfs(next_fatigue, n_visited, count + 1)
+
+    n = len(dungeons)
+    counts = []
+    dfs(cur_fatigue, [0 for _ in range(n)], 0)
+    return max(counts)
+
 # 어라? 틀리는 이유가 뭐지? current_k - consume_k을 해야하는데 k - ~로 해버렸네...
 # 그나저나 solution2의 틀리는 이유가 뭐지? 제발 파악하자.
