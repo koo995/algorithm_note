@@ -78,8 +78,33 @@ def solution2():
         test_cases.append((p, n, arr))
     for test_case in test_cases:
         operate(test_case)
+def solution3():
+    from collections import deque
+
+    def operate(func_lst, arr_lst):
+        print(arr_lst)
+        reverse_flag = False
+        for func in func_lst:
+            if func == "R":
+                reverse_flag = not reverse_flag
+            else:
+                if len(arr_lst) == 0:
+                    return "error"
+                if reverse_flag:
+                    arr_lst.pop()
+                else:
+                    arr_lst.popleft()
+        return list(arr_lst) if reverse_flag == False else list(arr_lst)[::-1]
+
+    T = int(input())
+    for _ in range(T):
+        func_lst = list(input())
+        n = int(input())
+        arrays = (input()[1:-1]).split(",")
+        print(operate(func_lst, arrays))
 
 
-solution2()
+
+solution3()
 # 흐음.... 왜 에러가 안들어가는 것일까??
 # 헐? arr = "[]" 인 경우... arr[1:-1].split(",") -> [''] 이런 결과가 나온다고....? 왜,,,?
