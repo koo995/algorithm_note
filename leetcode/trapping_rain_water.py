@@ -57,6 +57,21 @@ class Solution:
                 right += 1
         return volume
 
+    def trap3(self, heights: list[int]) -> int:
+        # 양 끝은 물이 안차는구나?
+        n = len(heights)
+        stack = []
+        water = 0
+        for current_idx in range(n):
+            while stack and stack[-1][1] <= heights[current_idx]:
+                prev_idx, prev_height = stack.pop()
+                if stack:
+                    water_height = min(heights[current_idx], stack[-1][1]) - prev_height
+                    water_width = current_idx - stack[-1][0] - 1
+                    water += water_height * water_width
+            stack.append((current_idx, heights[current_idx]))
+        return water
+
 
 sol = Solution()
 sol.trap1([4, 2, 0, 3, 2, 5])
