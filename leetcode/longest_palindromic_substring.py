@@ -30,3 +30,34 @@ class Solution:
 sol = Solution()
 sol.longestPalindrome("babad")
 # 와.... 이건 반드시 따로 다시 풀어보자.
+
+
+class Solution:
+    def longestPalindrome(self, string: str) -> str:
+        def get_odd_palind(i):
+            s = i
+            e = i + 1
+            if not (0 <= s < e < n and string[s] == string[e]):
+                return string[s]
+            while 0 <= s < e < n and string[s] == string[e]:
+                s -= 1
+                e += 1
+            return string[s+1:e]
+
+        def get_even_palind(i):
+            s = i - 1
+            e = i + 1
+            if not (0 <= s < e < n and string[s] == string[e]):
+                return string[i]
+            while 0 <= s < e < n and string[s] == string[e]:
+                s -= 1
+                e += 1
+            return string[s+1:e]
+        # 앞에서 탐색하나 뒤에서 탐색하나 같아야한다.
+        n = len(string)
+        results = []
+        for idx in range(n):
+            results.append(get_odd_palind(idx))
+            results.append(get_even_palind(idx))
+        results.sort(key=lambda result:len(result), reverse=True)
+        return results[0]
