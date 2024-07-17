@@ -14,6 +14,33 @@ class Solution:
             end += 1
         print(max_len)
 
+    # 다른사람 풀이
+    def lengthOfLongestSubstring2(self, array: str) -> int:
+        # 어떻게 해결할까? 새롭게 탐색하는 녀석.. set 자료구조를 이용하면 될듯?
+        from collections import deque
+        start = 0
+        dic = {}  # 여기다가는 해당 문자의 인덱스를 저장한다.
+        n = len(array)
+        result = 0
+        for end in range(n):
+            if array[end] in dic and dic[array[end]] >= start:
+                start = dic[array[end]] + 1
+            dic[array[end]] = end
+            result = max(result, end - start + 1)
+        return result
+
+    def lengthOfLongestSubstring3(self, array: str) -> int:
+        # 어떻게 해결할까? 새롭게 탐색하는 녀석.. set 자료구조를 이용하면 될듯?
+        from collections import deque
+        q = deque()
+        result = 0
+        for ch in array:
+            while ch in q:
+                q.popleft()
+            q.append(ch)
+            result = max(result, len(q))
+        return result
+
 
 sol = Solution()
 sol.lengthOfLongestSubstring("pwwkew")
