@@ -25,4 +25,31 @@ def solution():
     print(min_count)
 
 
-solution()
+def solution2():
+    def get_min_square(y, x):
+        count_a = 0
+        count_b = 0
+        for i, row in enumerate(board_a):
+            for j, ch in enumerate(row):
+                if ch != board[y + i][x + j]:
+                    count_a += 1
+        for i, row in enumerate(board_b):
+            for j, ch in enumerate(row):
+                if ch != board[y + i][x + j]:
+                    count_b += 1
+        return min(count_a, count_b)
+
+
+    N, M = map(int, input().split())
+    board = [input() for _ in range(N)]
+    board_a = ["WBWBWBWB", "BWBWBWBW", "WBWBWBWB", "BWBWBWBW", "WBWBWBWB", "BWBWBWBW", "WBWBWBWB", "BWBWBWBW"]
+    board_b = ["BWBWBWBW", "WBWBWBWB", "BWBWBWBW", "WBWBWBWB", "BWBWBWBW", "WBWBWBWB", "BWBWBWBW", "WBWBWBWB"]
+    min_result = int(1e9)
+    for i in range(N - 7):
+        for j in range(M - 7):
+            min_result = min(min_result, get_min_square(i, j))
+    print(min_result)
+
+
+
+solution2()
