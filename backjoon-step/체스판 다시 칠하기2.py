@@ -34,7 +34,6 @@ def solution():
     print(min_value)
     pass
 
-solution()
 
 
 def solution2():
@@ -90,4 +89,44 @@ def solution2():
     result2 = min_changes(mask2_sum_table, N, M, K)
     print(min(result1, result2))
 
+def solution3():
+    N, M, K = map(int, input().split())
+    board = [list(input()) for _ in range(N)]
+    board_a = [["B" if (i + j) % 2 == 0 else "W" for j in range(M)] for i in range(N)]
+    board_b = [["W" if (i + j) % 2 == 0 else "B" for j in range(M)] for i in range(N)]
+    a_diff = [[0 for _ in range(M)] for _ in range(N)]
+    b_diff = [[0 for _ in range(M)] for _ in range(N)]
+    for i in range(N):
+        for j in range(M):
+            if board[i][j] != board_a[i][j]:
+                a_diff[i][j] = 1
+            if board[i][j] != board_b[i][j]:
+                b_diff[i][j] = 1
+    sum_table_a = [[0 for _ in range(M)] for _ in range(N)]
+    sum_table_b = [[0 for _ in range(M)] for _ in range(N)]
+    # sum_table을 어떻게 만들어갈것이냐?
+    # 먼저 가로합
+    for i in range(N):
+        for j in range(M):
+            sum_table_a[i][j] += a_diff[i][j] + (sum_table_a[i][j - 1] if j - 1 >= 0 else 0)
+            sum_table_b[i][j] += b_diff[i][j] + (sum_table_b[i][j - 1] if j - 1 >= 0 else 0)
+    # 이제 세로합
+    for i in range(1, N):
+        for j in range(M):
+            sum_table_a[i][j] += sum_table_a[i - 1][j]
+            sum_table_b[i][j] += sum_table_b[i - 1][j]
+    # 이제 최소 결과를 구하자
+    min_result = int(1e8)
+    for i in range(K - 1, N):
+        for j in range(K - 1, M):
+            a_result = sum_table_a[i][j] - (sum_table_a[i][j - K] if j - K >= 0 else 0) \
+                       - (sum_table_a[i - K][j] if i - K >= 0 else 0) \
+                       + (sum_table_a[i - K][j - K] if i - K >= 0 and j - K >= 0 else 0)
+            b_result = sum_table_b[i][j] - (sum_table_b[i][j - K] if j - K >= 0 else 0) \
+                       - (sum_table_b[i - K][j] if i - K >= 0 else 0) \
+                       + (sum_table_b[i - K][j - K] if i - K >= 0 and j - K >= 0 else 0)
+            min_result = min(min_result, a_result, b_result)
 
+    print(min_result)
+
+solution3()
