@@ -30,3 +30,38 @@ def solution(m, n, board):
             break
         update(remove_index)       
     return sum([row.count("0") for row in board])
+
+
+def solution2(m, n, board):
+    def get_remove_points():
+        points = set()
+        for i in range(n - 1):
+            for j in range(m - 1):
+                if new_board[i][j] == "":
+                    continue
+                if new_board[i][j] == new_board[i + 1][j] == new_board[i][j + 1] == new_board[i + 1][j + 1]:
+                    points |= set([(i, j), (i + 1, j), (i, j + 1), (i + 1, j + 1)])
+        return points
+
+        return new_board[i][j] == new_board[i + 1][j] == new_board[i][j + 1] == new_board[i + 1][j + 1]
+
+    new_board = [[board[j][i] for j in reversed(range(m))] for i in range(n)]
+    remove_points = set()
+    count = 0
+    while 1:
+        remove_points = get_remove_points()
+        if not remove_points:
+            break
+        count += len(remove_points)
+        for remove_point in remove_points:
+            i, j = remove_point  # 이 녀석들을 어떻게 제거하지?
+            new_board[i][j] = ""
+        for i in range(n):
+            for j in reversed(range(m)):
+                if new_board[i][j] == "":
+                    new_board[i].pop(j)
+                    new_board[i].append("")
+    return count
+
+
+
