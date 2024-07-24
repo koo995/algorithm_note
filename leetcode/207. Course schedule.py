@@ -32,7 +32,34 @@ class Solution:
             if is_circulate(node): # 순환한다면?
                 return False
         return True
-    
+
+    def canFinish2(self, numCourses: int, prerequisites: list[list[int]]) -> bool:
+        def is_cycle(node, visited) -> bool:
+            if visited[node]:
+                return True
+            visited[node] = 1
+            if no_cycle[node]:
+                return False
+            for n_node in graph[node]:
+                if is_cycle(n_node, visited[::]):
+                    return True
+                no_cycle[n_node] = True
+            return False
+
+        graph = [[] for _ in range(numCourses)]
+        for dest, start in prerequisites:
+            graph[start].append(dest)
+        no_cycle = [False for _ in range(numCourses)]
+        for start in range(numCourses):
+            if no_cycle[start]:
+                continue
+            if is_cycle(start, [0 for _ in range(numCourses)]):
+                return False
+            no_cycle[start] = True
+        return True
+        # 아아... 역시 끊어져 있는 경우가 발생할 수 있다.
+
+
         
 # 그래프의 각 노드들에 대해서 순환을 이루면 안된다가 문제이다. 그 말은 서로 순환을 이루지 않는 다른 집합들이 있을 수 있단것이지
 # 각 노드들은 본인을 부모로 가지고 있고... 서로 부모가 다르다면 사이클을 이루지 않는다가 되는 것이다.
