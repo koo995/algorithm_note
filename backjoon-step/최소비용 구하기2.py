@@ -39,5 +39,46 @@ def solution():
     print(len(path))
     print(" ".join(map(str, path[::-1])))
 
+import heapq
+def solution2():
 
-solution()
+    n = int(input())
+    m = int(input())
+    bus_infos = [list(map(int, input().split())) for _ in range(m)]
+    src, dest = map(int, input().split())
+
+    graph = {}
+    for start, end, cost in bus_infos:
+        if start not in graph:
+            graph[start] = {end: cost}
+        else:
+            graph[start][end] = cost
+    print(graph)
+    INF = int(1e9)
+    prev_path = {i: i for i in range(1, n + 1)}
+    distance = {i: INF for i in range(1, n + 1)}
+    distance[src] = 0
+    q = [(0, src)]
+    while q:
+        dist, node = heapq.heappop(q)
+        if distance[node] < dist:
+            continue
+        for n_node in graph[node].keys():
+            if distance[n_node] > dist + graph[node][n_node]:
+                distance[n_node] = dist + graph[node][n_node]
+                prev_path[n_node] = node
+                heapq.heappush(q, (distance[n_node], n_node))
+    print(distance[dest])
+    # 이제부터 경로를 복원해야한다.
+    path = [dest]
+    point = dest
+    while point != src:
+        prev_node = prev_path[point]
+        path.append(prev_node)
+        point = prev_node
+    print(prev_path)
+
+
+
+
+solution2()
