@@ -1,3 +1,6 @@
+from typing import Tuple
+
+
 def solution():
     def find_seat(*prefer_friends):
         table_cond_info = []
@@ -55,5 +58,163 @@ def solution():
             total_score += score_dic[count]
     print(total_score)
     
-    
-solution()
+def solution2():
+    from functools import cmp_to_key
+    def get_table_point(s) -> tuple[int, int]:
+        def compare(point1, point2) -> int:
+            # 먼저 인접한 칸에 좋아하는 사람이 몇명인지 체크한다.
+            point1_count, point2_count = 0, 0
+            for i in range(4):
+                n_point1_y = point1[0] + dy[i]
+                n_point1_x = point1[1] + dx[i]
+                n_point2_y = point2[0] + dy[i]
+                n_point2_x = point2[1] + dx[i]
+                point1_count += 1 if 0 <= n_point1_y < N and 0 <= n_point1_x < N and table[n_point1_y][n_point1_x] in prefer_person[s] else 0
+                point2_count += 1 if 0 <= n_point2_y < N and 0 <= n_point2_x < N and table[n_point2_y][n_point2_x] in prefer_person[s] else 0
+            if point1_count > point2_count:  # 많은 녀석이 앞에 와야한다.즉 일반적인 경우의 역순이다.
+                return -1
+            elif point1_count < point2_count:
+                return 1
+            else: # 이제 같은 경우니까... 비어있는 칸이 가장 많은 것을 체크해야지?
+                empty_count1, empty_count2 = 0, 0
+                for i in range(4):
+                    n_point1_y = point1[0] + dy[i]
+                    n_point1_x = point1[1] + dx[i]
+                    n_point2_y = point2[0] + dy[i]
+                    n_point2_x = point2[1] + dx[i]
+                    empty_count1 += 1 if 0 <= n_point1_y < N and 0 <= n_point1_x < N and table[n_point1_y][n_point1_x] == 0 else 0
+                    empty_count2 += 1 if 0 <= n_point2_y < N and 0 <= n_point2_x < N and table[n_point2_y][n_point2_x] == 0 else 0
+                if empty_count1 > empty_count2:
+                    return -1
+                elif empty_count1 < empty_count2:
+                    return 1
+                else:
+                    if point1[0] < point2[0]: # 여기서 행을 비교하는데 더 작은 녀석이 앞에 와야한다.
+                        return -1
+                    elif point1[0] > point2[0]:
+                        return 1
+                    else:
+                        return point1[1] - point2[1]
+        table_points = [(i, j) for j in range(N) for i in range(N) if table[i][j] == 0]
+        table_points.sort(key=cmp_to_key(compare))
+        print(table_points)
+        return table_points[0]
+
+    N = int(input())
+    infos = [tuple(map(int, input().split())) for _ in range(N * N)]
+    # 어쨋든 만족도를 구해야하는데... N 은 최대 20이니까 칸은 400 개가 최대다.
+    prefer_person = {s: persons for s, *persons in infos}
+    table = [[0 for _ in range(N)] for _ in range(N)]
+    dx = [0, 0, 1, -1]
+    dy = [1, -1, 0, 0]
+    for info in infos:
+        s = info[0]
+        i, j = get_table_point(s)
+        print(s, i, j)
+        table[i][j] = s
+    print(table)
+    result = 0
+    for y in range(N):
+        for x in range(N):
+            stud = table[y][x]
+            count = 0
+            for i in range(4):
+                n_y = y + dy[i]
+                n_x = x + dx[i]
+                count += 1 if 0 <= n_y < N and 0 <= n_x < N and table[n_y][n_x] in prefer_person[stud] else 0
+            if count == 1:
+                result += 1
+            elif count == 2:
+                result += 10
+            elif count == 3:
+                result += 100
+            elif count == 4:
+                result += 1000
+
+
+    print(result)
+
+
+from functools import cmp_to_key
+import sys
+
+def solution3():
+    def get_table_point(s) -> tuple[int, int]:
+        def compare(point1, point2) -> int:
+            # 먼저 인접한 칸에 좋아하는 사람이 몇명인지 체크한다.
+            point1_count, point2_count = 0, 0
+            for i in range(4):
+                n_point1_y = point1[0] + dy[i]
+                n_point1_x = point1[1] + dx[i]
+                n_point2_y = point2[0] + dy[i]
+                n_point2_x = point2[1] + dx[i]
+                if 0 <= n_point1_y < N and 0 <= n_point1_x < N and table[n_point1_y][n_point1_x] in prefer_person[s]:
+                    point1_count += 1
+                if 0 <= n_point2_y < N and 0 <= n_point2_x < N and table[n_point2_y][n_point2_x] in prefer_person[s]:
+                    point2_count += 1
+
+            if point1_count != point2_count:
+                return point2_count - point1_count  # 많은 녀석이 앞에 와야 한다.
+
+            # 이제 같은 경우니까 비어있는 칸이 가장 많은 것을 체크해야지
+            empty_count1, empty_count2 = 0, 0
+            for i in range(4):
+                n_point1_y = point1[0] + dy[i]
+                n_point1_x = point1[1] + dx[i]
+                n_point2_y = point2[0] + dy[i]
+                n_point2_x = point2[1] + dx[i]
+                if 0 <= n_point1_y < N and 0 <= n_point1_x < N and table[n_point1_y][n_point1_x] == 0:
+                    empty_count1 += 1
+                if 0 <= n_point2_y < N and 0 <= n_point2_x < N and table[n_point2_y][n_point2_x] == 0:
+                    empty_count2 += 1
+
+            if empty_count1 != empty_count2:
+                return empty_count2 - empty_count1
+
+            # 행을 비교하는데 더 작은 녀석이 앞에 와야 한다.
+            if point1[0] != point2[0]:
+                return point1[0] - point2[0]
+
+            # 열을 비교한다.
+            return point1[1] - point2[1]
+
+        table_points = [(i, j) for i in range(N) for j in range(N) if table[i][j] == 0]
+        table_points.sort(key=cmp_to_key(compare))
+        return table_points[0]
+
+    N = int(sys.stdin.readline())
+    infos = [tuple(map(int, sys.stdin.readline().split())) for _ in range(N * N)]
+    prefer_person = {s: persons for s, *persons in infos}
+    table = [[0 for _ in range(N)] for _ in range(N)]
+    dx = [0, 0, 1, -1]
+    dy = [1, -1, 0, 0]
+
+    for info in infos:
+        s = info[0]
+        i, j = get_table_point(s)
+        table[i][j] = s
+
+    result = 0
+    for y in range(N):
+        for x in range(N):
+            stud = table[y][x]
+            count = 0
+            for i in range(4):
+                n_y = y + dy[i]
+                n_x = x + dx[i]
+                if 0 <= n_y < N and 0 <= n_x < N and table[n_y][n_x] in prefer_person[stud]:
+                    count += 1
+            if count == 1:
+                result += 1
+            elif count == 2:
+                result += 10
+            elif count == 3:
+                result += 100
+            elif count == 4:
+                result += 1000
+
+    print(result)
+
+
+
+solution3()
