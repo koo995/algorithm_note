@@ -14,4 +14,14 @@ def solution():
         compressed_result.append(str(order))
     print(" ".join(compressed_result))
 
-solution()
+def solution2():
+    N = int(input())
+    points = list(map(int, input().split()))
+    sorted_points = sorted(list(set(points)))
+    point_dic = {point:idx for idx, point in enumerate(sorted_points)}
+    results = []
+    for point in points:
+        results.append(point_dic[point])
+    print(*results)
+solution2()
+
