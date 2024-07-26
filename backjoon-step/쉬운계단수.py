@@ -16,4 +16,23 @@ def solution():
    
     print(sum([dp[N][i] for i in range(10)]) % int(1e9))
 
-solution()
+def solution2():
+    N = int(input())
+    dp = {n: {i: 0 for i in range(10)} for n in range(N + 1)}
+    # 길이가 1이 녀석 먼저 초기화
+    for i in range(10):
+        if i == 0:
+            dp[1][i] = 0
+            continue
+        dp[1][i] = 1
+    if N == 1:
+        print(sum(dp[1][i] for i in range(10)))
+    # 길이가 2 이상인 녀석들 초기화하자
+    else:
+        for n in range(2, N + 1):
+            for i in range(10):
+                dp[n][i] = (dp[n - 1][i - 1] if i - 1 >= 0 else 0) + (dp[n - 1][i + 1] if i + 1 < 10 else 0)
+        print(sum(dp[N][i] for i in range(10)) % int(1e9))
+
+
+solution2()
