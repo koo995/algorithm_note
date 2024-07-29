@@ -114,5 +114,103 @@ def solution():
         bead_board = array_to_board(updated_bead_arrays)
     print(1 * bead_count[1] + 2 * bead_count[2] + 3 * bead_count[3])
 
+def solution2():
+    # 구슬이 연속된 것을 판단하기 위한 자료구조가 필요하다
+    # 연속된 구슬이 4개 이상이면 폭발이 일어나고 계속해서 줄어든다. 더 이상 폭발할 녀석이 없을때까지 계속 이루어진다.
+    # 폭발 후에는 변화한다? 그룹에 해당하는 구슬들... 즉 4개 미만의 연속된 녀석들은 같은 녀석들이 2개로 변한다.
+    # 구해야하는 것은 각 번호에 해당하는 구슬의 갯수
+    def get_marble_array():
+        def dfs(node, direct):
+            if node == shark_point:
+                return
+            arr.append(board[node[0]][node[1]])
+            board[node[0]][node[1]] = -1
+            # 이제 다음 녀석을 탐색해 나가야 한다.
+            n_node = (node[0] + dy[direct], node[1] + dx[direct])
+            if not (0 <= n_node[0] < N and 0 <= n_node[1] < N and board[n_node[0]][n_node[1]] >= 0):
+                direct = (direct + 1) % 4
+                n_node = (node[0] + dy[direct], node[1] + dx[direct])
+            dfs(n_node, direct)
+            # 여기서 또 같은 direct로 탐색해 나가야 하는데... 어떤 조건으로 방향을 바꾸지? 다음 노드가 막다른 길이거나 구슬이 0이거나
+        arr = []
+        dx = [1, 0, -1, 0]
+        dy = [0, 1, 0, -1]
+        dfs((0, 0), 0)
+        return arr
 
-solution()
+    def remove_all_zero(array):
+        while 0 in array:
+            array.remove(0)
+
+    def explode_4seq_marble(array):
+        # 한 배열에서 연속적인 수가 4개 이상있으면 어떻게 삭제할까? 단순삭제가 아니라 연속된 삭제여야한다.
+        new_array = array.copy()
+        is_continue = True
+        while is_continue:
+            # 여기서 부터 계속 체크를 해나가면서 지워나가야 한다.
+            stack = [] # 스택에는 결국 같은 녀석들만 채워질 것이다.
+            # 근데 여기서... 폭발할 것이 없다는 것을 어떻게 체크할까?
+            for i in range(len(new_array)):
+                if stack and (new_array[stack[-1]] != new_array[i]):
+                    if len(stack) >= 4:
+                        seq_num = new_array[stack[-1]]
+                        exploded_marble_count[seq_num] += len(stack)
+                        # 그리고 0으로 바꿔야한다.
+                        while stack:
+                            idx = stack.pop()
+                            new_array[idx] = 0
+                    stack.clear()
+                stack.append(i)
+            # 이제 여기서 0으로 바뀐 녀석들을 지워야한다.
+            if 0 not in new_array:
+                is_continue = False
+            remove_all_zero(new_array)
+        return new_array
+
+    def update(array):
+        new_array = []
+        stack = []  # 어쨋든 스택에는 같은 녀석들만 넣는다.
+        for i in range(len(array)):
+            if stack and array[stack[-1]] != array[i]:
+                # 스택에 새로운 녀석을 넣어야하는 때가 오면... 업데이트를 해야지?
+                new_array.append(len(stack))
+                new_array.append(array[stack[-1]])
+                stack.clear()
+            stack.append(i)
+        return new_array
+
+
+
+    N, M = map(int, input().split())
+    board = [list(map(int, input().split())) for _ in range(N)]
+    skills = [list(map(int, input().split())) for _ in range(M)]
+    shark_point = (N // 2, N // 2)
+    exploded_marble_count = {i: 0 for i in range(1, 4)}
+    skill_direction = {1: (-1, 0), 2: (1, 0), 3: (0, -1), 4: (0, 1)}
+    # 특정 좌표에 어떤 구슬이 있는지는 board 을 사용하면 되겠고... 이 회전을 어떻게 처리하지...?
+    for skill in skills:
+        direction, distance = skill
+        # 공격을 받은 좌표의 구슬은 0으로 처리한다.
+        for i in range(1, distance + 1):
+            n_y = shark_point[0] + (skill_direction[direction][0] * i)
+            n_x = shark_point[1] + (skill_direction[direction][1] * i)
+            board[n_y][n_x] = 0
+        # 모든 좌표에 대해서 스택으로 처리하고...
+        marble_array = get_marble_array()
+        print(marble_array)
+        remove_all_zero(marble_array)
+        print(marble_array)
+        exploded_marble = explode_4seq_marble(marble_array)
+        print(exploded_marble)
+        updated_marble = update(exploded_marble)
+        print(updated_marble)
+        # board = update_board(marble_array)
+        # 자 여기서 array 을 돌면서 좌표 하나하나당 확인을 하고 그 값이 0 이면 삭제를 시킨다.
+        # 그리고 4개 이상인 녀석이 있는지 확인하고 폭발을 일으킨다. 이건 계속 반복되어야한다. 그리고 기록을 한다.
+        # 자 이제 marble 여기는 업데이트를 해줘야한다...
+        # 아... 이러면 스택에다가 좌표를 기록하는 것이 맞나...?좌표를 기록할게 아니라... 구슬번호를 모두 집어넣고, 0이면 삭제를 해버리고 4개 연속되면 폭발시키고
+        # 폭발 다 끝나면 업데이트하고 다시 board 에 써내려간다. 이게 맞는것같다.
+
+
+
+solution2()
