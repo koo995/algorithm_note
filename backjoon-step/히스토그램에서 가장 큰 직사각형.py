@@ -67,7 +67,6 @@ def solution2():
 
         # 최대 직사각형 넓이를 출력합니다.
         print(max_result)
-solution2()
 
 
 def solution3():
@@ -102,3 +101,33 @@ def solution3():
 
     # 최대 직사각형 넓이를 출력합니다.
     print(max_result)
+
+
+def solution4():
+    import sys
+    input = sys.stdin.read
+    data = input().splitlines()
+
+    for line in data:
+        if line == "0":
+            break
+
+        _, *heights = map(int, line.split())
+        n = len(heights)
+        stack = []
+        max_area = 0
+
+        for i, height in enumerate(heights):
+            start = i
+            while stack and stack[-1][1] > height:
+                index, h = stack.pop()
+                max_area = max(max_area, h * (i - index))
+                start = index
+            stack.append((start, height))
+
+        # Clean up the remaining bars in the stack
+        while stack:
+            index, h = stack.pop()
+            max_area = max(max_area, h * (n - index))
+
+        print(max_area)
