@@ -9,4 +9,16 @@ def solution():
     num_of_garosu = num_of_dis + 1 - len(garosu_lst)
     print(num_of_garosu)
 
-solution()
+
+def solution2():
+    import math
+
+    N = int(input())
+    tree_points = [int(input()) for _ in range(N)]
+    distances = [tree_points[i + 1] - tree_points[i] for i in range(N - 1)]
+    g = math.gcd(*distances)
+    print(g)
+    # 그렇다면 이렇게 나온 값을 심는다면 몇개가 필요하냐?
+    print((tree_points[-1] - tree_points[0]) // g - N + 1)
+
+solution2()
