@@ -23,4 +23,30 @@ def solution():
     for test_case in test_cases:
         print_prime_num(test_case)
 
-solution()
+def solution2():
+    import math
+
+    def get_prime(num):
+        if num == 0 or num == 1:
+            print(2)
+        else:
+            is_not_prime = True
+            while is_not_prime:
+                # 여기에 1 이 아닌 조건이 있어야하군...
+                is_not_prime = False
+                for i in range(2, int(math.sqrt(num)) + 1):
+                    if num % i == 0: # 소수가 아님
+                        is_not_prime = True
+                        num += 1
+                        break
+            print(num)
+                # 반복문을 돌았는데... 중지되지 않았다면? 소수란 녀석이군?
+
+    T = int(input())
+    tests = [int(input()) for _ in range(T)]
+    for test in tests:
+        # test 보다 크거나 같은 소수중 가장 작은 소수를 구해야한다.
+        get_prime(test)
+    pass
+
+solution2()
