@@ -60,7 +60,57 @@ def solution2():
                 count += 1
         print(count)
 
-solution2()
+def solution3():
+    import math
+    def is_not_prime(num):
+        if num == 0 or num == 1:
+            return True
+        # num이 소수인지 아닌지 판단한다.
+        for i in range(2, int(math.sqrt(num)) + 1):
+            if num % i == 0:
+                return True
+        return False
+    def init_prime_nums():
+        max_nums = int(1e6) + 1
+        nums = [1 for _ in range(max_nums)]
+        # 자 인덱스에 해당하는 수가 소수인지 아닌지 체크하는 것이다.
+        nums[0] = 0
+        nums[1] = 0
+        for i in range(2, max_nums):
+            # 0이라면 이미 소수가 아니니까 체크를 안한다.
+            if nums[i] == 0:
+                continue
+            # if is_not_prime(i):
+            #     # i 가 프라임이 아니라면... 그 배수도 모두 소수가 아니다.
+            #     nums[i] = 0
+            for j in range(2, max_nums):
+                if i * j >= max_nums:
+                    break
+                nums[i * j] = 0
+        # 자 이제... 1로 남은 녀석들만 소수이다.
+        prime_nums = [i for i in range(max_nums) if nums[i] == 1]
+        return prime_nums
+
+    T = int(input())
+    test_nums = [int(input()) for _ in range(T)]
+    prime_nums = init_prime_nums()
+    for test_num in test_nums:
+        # 소수중에서 test_num 을 만족하는 쌍이 몇개인지 찾자
+        start = 0
+        end = len(prime_nums) - 1
+        count = 0
+        while 0 <= start <= end < len(prime_nums):
+            if prime_nums[start] + prime_nums[end] > test_num:
+                end -= 1
+            elif prime_nums[start] + prime_nums[end] < test_num:
+                start += 1
+            else: # 여기서 찾았다!
+                count += 1
+                start += 1
+                end -= 1
+        print(count)
+
+solution3()
 
 # 역시 그냥 이러한 풀이는 시간초과를 발생시키네...
 # 100만 까지 모든수에 대해서 프라임이냐 아니냐를 판단하는것은 너무 오래 걸린다.
