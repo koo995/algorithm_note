@@ -62,3 +62,75 @@ def solution2(u_ids, b_ids):
     return len(answers)
 
 print(solution2(["frodo", "fradi", "crodo", "abc123", "frodoc"], ["*rodo", "*rodo", "******"]))
+
+
+def solution(u_ids, b_ids):
+    def check(uid, bid):
+        if len(uid) != len(bid):
+            return False
+        for i in range(len(uid)):
+            if uid[i] != bid[i]:
+                if bid[i] == "*":
+                    continue
+                return False
+        return True
+
+    def dfs(user_ids, banned_ids, path):
+        if len(path) == len(b_ids):
+            path.sort()
+            results.add(tuple(path))
+
+        for banned_id in banned_ids:
+            for idx, user_id in enumerate(user_ids):
+                if check(user_id, banned_id):
+                    next_path = path.copy()
+                    next_path.append(user_id)
+                    # remain_user_ids = user_ids.copy()
+                    # remain_user_ids.remove(user_id)  여기 부분... 생각하기 쉽지 않았다.
+                    remain_banned_ids = banned_ids.copy()
+                    remain_banned_ids.remove(banned_id)
+                    dfs(user_ids[idx + 1:] if idx + 1 < len(user_ids) else [], remain_banned_ids, next_path)
+
+    results = set()
+    dfs(u_ids, b_ids, [])
+    return len(results)
+
+
+def solution(u_ids, b_ids):
+    from collections import defaultdict
+    from itertools import product, combinations, permutations
+
+    def check(uid, bid):
+        if len(uid) != len(bid):
+            return False
+        for i in range(len(uid)):
+            if uid[i] != bid[i]:
+                if bid[i] == "*":
+                    continue
+                return False
+        return True
+
+    def dfs(node, path):
+        if len(path) == len(b_ids):
+            path.sort()
+            results.add(tuple(path))
+            return
+
+        for next_node in candidates[node]:
+            if next_node in path:
+                continue
+            next_path = path.copy()
+            next_path.append(next_node)
+            dfs(node + 1, next_path)
+
+    candidates = defaultdict(list)
+    for idx, banned_id in enumerate(b_ids):
+        for user_id in u_ids:
+            if check(user_id, banned_id):
+                candidates[idx].append(user_id)
+    print(candidates)
+    # 자 여기서 한쪽 리스트에서 하나씩 뽑아내는 조합을 구해야한다.
+    results = set()
+    dfs(0, [])
+    print(results)
+    return len(results)
