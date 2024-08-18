@@ -123,6 +123,36 @@ def solution3(arr):
     return dp_max[0][-1]
 
 
+def solution4(arr):
+    operands = []
+    operators = []
+    for idx, s in enumerate(arr):
+        operands.append(int(s)) if idx % 2 == 0 else operators.append(s)
+
+    # 처음부터 끝까지 연산했을때 최대값을 알고싶다.
+    INF = int(1e9)
+    max_dp = [[-INF] * len(operands) for _ in range(len(operands))]
+    min_dp = [[INF] * len(operands) for _ in range(len(operands))]
+    for l in range(len(operands)):
+        for start in range(len(operands) - l):
+            end = start + l
+            if start == end:
+                max_dp[start][end] = min_dp[start][end] = operands[start]
+                continue
+            for i in range(start, end):
+                if operators[i] == "+":
+                    max_dp[start][end] = max(max_dp[start][end], \
+                                             max_dp[start][i] + max_dp[i + 1][end])
+                    min_dp[start][end] = min(min_dp[start][end], \
+                                             min_dp[start][i] + min_dp[i + 1][end])
+                else:  # operators[i] == "-":
+                    max_dp[start][end] = max(max_dp[start][end], \
+                                             max_dp[start][i] - min_dp[i + 1][end])
+                    min_dp[start][end] = min(min_dp[start][end], \
+                                             min_dp[start][i] - max_dp[i + 1][end])
+    return max_dp[0][-1]
+
+
 # solution3(["5", "-", "3", "+", "1", "+", "2", "-", "4"])
 # [5, -3, 1, 2, -4]
 # 대충 점화식은 안다고 해도.. dp을 구성하는 이유는 연산량을 줄이기 위함인데, for문을 어떻게 배치하냐도 엄청나게 중요하잖아?
