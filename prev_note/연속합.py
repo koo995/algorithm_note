@@ -41,5 +41,14 @@ def solution2():
             )  # 여기서 바로 직전까지의 최대썸은...
         print(max(max_sum))
 
+def solution3():
+    n = int(input())
+    numbers = list(map(int, input().split()))
+    N = int(len(numbers))
+    INF = int(1e9)
+    dp = [-INF] * N
+    for i in range(N):
+        dp[i] = max(dp[i-1] + numbers[i], numbers[i])
+    print(max(dp))
 
-solution2()
+solution3()
