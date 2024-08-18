@@ -39,5 +39,21 @@ def solution2():
         print(max(max(dp[1]), max(dp[0])))
     pass
 
+def solution3():
+    n = int(input())
+    numbers = list(map(int, input().split()))
+    N = len(numbers)
+    INF = int(1e9)
+    dp = [[-INF] * N for _ in range(2)]
+    if N == 1:
+        print(numbers[0])
+        return
+    for i in range(N): # 지금처럼 N 으로 하면... dp[-1] 에 해당하는 부분이 어짜피 -INF 라서 계산결과가 올바르게 나오지만... 원래는 미리 초기화해두자
+        dp[1][i] = max(dp[1][i - 1] + numbers[i], numbers[i]) # 전까지의 기록에 이어가거나 나부터 시작하거나
+        dp[0][i] = max(dp[0][i - 1] + numbers[i], dp[1][i - 1] + numbers[i], dp[1][i - 1])
 
-solution2()
+    print(dp[1])
+    print(dp[0])
+    print(max(max(dp[1]), max(dp[0])))
+
+solution3()
