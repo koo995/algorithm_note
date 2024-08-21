@@ -19,6 +19,20 @@ def solution():
     return max(dp)
 
 
-print(solution())
+# print(solution())
 # 단순히 한단계 앞의 녀석의 포함여부를 비교하는 것으로는 무리가 있다.
 # 그렇다면 그보다 더 앞의 녀석들을 비교해 나가야 할텐데? 그렇다면 이중 for문으로 확인을 해나가야할까? N이 1000인 이상 10만도 괜찮다.
+
+def solution2():
+    N = int(input())
+    A = list(map(int, input().split()))
+    if N == 1:
+        print(1)
+    dp = [1] * N
+    for i in range(1, N):
+        for j in range(i):
+            if A[i] > A[j]:
+                dp[i] = max(dp[i], dp[j] + 1)
+    print(max(dp))
+
+solution2()
