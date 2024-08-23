@@ -33,5 +33,26 @@ def solution():
         path.append(arrays[index])
         print(max_value)
         print(" ".join(map(str, path[::-1])))
-            
-solution()
+
+
+def solution2():
+    # 수열을 다 저장하면 될까..?
+    N = int(input())
+    A = list(map(int, input().split()))
+    dp = [[A[i]] for i in range(N)]
+    if N == 1:
+        print(1)
+        print(A[0])
+        return
+
+    for i in range(N):
+        for j in range(i):
+            if A[i] > A[j]:
+                dp[i] = max(dp[i], dp[j].copy() + [A[i]], key=lambda lst: len(lst))
+
+    dp.sort(key=lambda lst: -len(lst))
+    print(len(dp[0]))
+    print(*dp[0])
+# 엥 예전에 굳이 왜 경로복원 방법을 선택했지...?
+
+solution2()
