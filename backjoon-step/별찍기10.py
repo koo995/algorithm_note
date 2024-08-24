@@ -21,4 +21,26 @@ def solution():
     for row in print_map:
         print("".join(row))
 
-solution()
+
+def solution2():
+    def star(n):
+        if n == 3:
+            print_map[0][:3] = print_map[2][:3] = ["*", "*", "*"]
+            print_map[1][:3] = ["*", " ", "*"]
+            return
+        star(n//3)
+        inner_size = n//3
+        for i in range(3):
+            for j in range(3):
+                if i == j == 1:
+                    continue
+                for k in range(inner_size):
+                    print_map[i * inner_size + k][j * inner_size: (j + 1) * inner_size] = print_map[k][:inner_size]
+
+    N = int(input())
+    print_map = [[" "] * N for _ in range(N)]
+    star(N)
+    for row in print_map:
+        print("".join(row))
+
+solution2()
