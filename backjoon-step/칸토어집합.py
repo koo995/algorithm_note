@@ -27,5 +27,28 @@ def solution():
         except:
             break
 
-solution()
+def solution2():
+    def canto(n):
+        def div_and_conquer(s, l):
+            if l == 1:
+                return
+            next_l = l // 3
+            for i in range(3):
+                div_and_conquer(s + next_l * i, next_l)
+                if i == 1:
+                    s_lst[s + next_l * i: s + next_l * i + next_l] = [" "] * next_l
+
+        length = 3 ** n
+        s_lst = ["-"] * length
+        div_and_conquer(0, length)
+        print("".join(s_lst))
+
+    while 1:
+        try:
+            num = int(input())
+            canto(num)
+        except:
+            break
+
+solution2()
 # 약간의 응용으로... "-" 이것을 쓰는 코드로 가보는것은 어떨까?
