@@ -20,17 +20,13 @@ def solution():
             power += S[b-1][a-1]
         return power
 
-    def get_balance(a_team, b_team) -> int:
-        a_power = get_power(a_team)
-        b_power = get_power(b_team)
-        return abs(a_power - b_power)
-
     N = int(input())
     S = [list(map(int, input().split())) for _ in range(N)]
     players = [i for i in range(1, N + 1)]
     min_balance = int(1e9)
     for team_a, team_b in get_team_combinations(players):
-        min_balance = min(min_balance, get_balance(team_a, team_b))
+        min_balance = min(min_balance, abs(get_power(team_a) - get_power(team_b)))
     print(min_balance)
 
+solution()
 
