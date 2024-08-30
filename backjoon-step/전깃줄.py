@@ -33,4 +33,15 @@ def solution():
         max_value = max(dp[i][0], dp[i][1])    
     print(N - max_value)
 
-solution()
+def solution2():
+    N = int(input())
+    electric_lines = [tuple(map(int, input().split())) for _ in range(N)]
+    electric_lines.sort()
+    dp = [1] * N
+    for i in range(1, N):
+        for j in range(i):
+            if electric_lines[i][1] > electric_lines[j][1]:
+                dp[i] = max(dp[i], dp[j] + 1)
+    print(N - max(dp))
+
+solution2()
