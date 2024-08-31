@@ -13,4 +13,22 @@ def solution():
                 dp[y][x] = max(dp[y - 1][x], dp[y][x - 1])    
             max_value = max(max_value, dp[y][x])
     print(max_value)
-solution()
+
+
+def solution2():
+    A = input()
+    B = input()
+    max_value = -1
+    dp = [[0] * len(B) for _ in range(len(A))]
+    for i in range(len(A)):
+        for j in range(len(B)):
+            if A[i] == B[j] and i == 0 and j == 0:
+                dp[i][j] = 1
+            elif A[i] == B[j]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+            max_value = max(max_value, dp[i][j])
+    print(max_value)
+
+solution2()
