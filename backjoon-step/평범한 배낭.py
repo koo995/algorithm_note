@@ -40,6 +40,24 @@ def solution2():
                     continue
                 dp[w][j] = max((dp[w - object_weight][j - 1] + object_value), dp[w][j - 1]) # dp[w][j] 을 새롭게 업데이트해나갈 필요는 없지... 
     print(max(dp[K]))
+
+def solution3():
+    N, K = map(int, input().split())
+    items = [tuple(map(int, input().split())) for _ in range(N)]
+    items.sort(key=lambda item: item[0])
+    print(items)
+    dp = [[0] * N for _ in range(K + 1)]
+    for weight in range(K + 1):
+        for idx, item in enumerate(items):
+            item_weight, value = item
+            if item_weight > weight:
+                dp[weight][idx] = max(dp[weight][idx], dp[weight][idx - 1] if idx - 1 >= 0 else 0)
+            elif item_weight == weight:
+                dp[weight][idx] = max(dp[weight][idx - 1], value)
+            else: # item_weight < weight
+                dp[weight][idx] = max(dp[weight - item_weight][idx - 1] + value if idx - 1 >= 0 else 0,
+                                      dp[weight - 1][idx],
+                                      dp[weight][idx - 1] if idx - 1 >= 0 else 0)
+    print(max(dp[K]))
     
-    
-solution2()
+solution3()
