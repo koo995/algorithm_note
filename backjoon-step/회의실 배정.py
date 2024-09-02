@@ -13,4 +13,24 @@ def solution():
                 end = n_e
         print(count)
 
-solution()
+
+def solution2():
+    N = int(input())
+    meetings = [tuple(map(int, input().split())) for _ in range(N)]
+    meetings.sort(key=lambda meeting: (meeting[1], meeting[0]))
+    start = meetings[0][0]
+    end = meetings[0][1]
+    count = 1
+    if N == 1:
+        print(count)
+    else:
+        for meeting in meetings[1:]:
+            next_start = meeting[0]
+            next_end = meeting[1]
+            if end <= next_start:
+                count += 1
+                end = next_end
+        print(count)
+    pass
+
+solution2()
