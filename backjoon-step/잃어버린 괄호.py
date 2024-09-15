@@ -26,6 +26,31 @@ def solution():
         else:
             result.append(-1 * num_lst[idx])
     print(sum(result))
+
+def solution2():
+    S = input()
+    operands = []
+    operators = []
+    cur = ""
+    for ch in S:
+        if ch.isnumeric():
+            cur += ch
+        else:
+            operands.append(int(cur))
+            operators.append(ch)
+            cur = ""
+    operands.append(int(cur))
+    dp_min = [int(1e9)] * len(operands)
+    dp_min[0] = operands[0] # 최소
+    minus_flag = False
+    for i in range(1, len(operands)):
+        if operators[i - 1] == "+":
+            dp_min[i] = min(dp_min[i], dp_min[i - 1] + operands[i], (dp_min[i - 1] - operands[i]) if minus_flag else int(1e9))
+        else: # operators == "-"
+            minus_flag = True
+            dp_min[i] = min(dp_min[i], dp_min[i - 1] - operands[i])
+    print(dp_min[-1])
+
+
         
-        
-solution()
+solution2()
