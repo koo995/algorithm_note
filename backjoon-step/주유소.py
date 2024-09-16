@@ -19,5 +19,24 @@ def solution():
         total_cost += length * price
     print(total_cost)
 
+def solution2():
+    N = int(input())
+    dists = list(map(int, input().split()))
+    prices = list(map(int, input().split()))
+    min_cost = 0
+    visited = [0] * len(dists)
+    for i in range(len(dists)):
+        if visited[i]:
+            continue
+        visited[i] = 1
+        dist = dists[i]
+        price = prices[i]
+        min_cost += dist * price
+        next_i = i + 1
+        while next_i < len(dists) and prices[next_i] > price:
+            visited[next_i] = 1
+            min_cost += price * dists[next_i]
+            next_i += 1
+    print(min_cost)
 
-solution()
+solution2()
