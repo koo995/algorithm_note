@@ -23,5 +23,34 @@ def solution():
     paper_count = [0, 0, 0]
     div_conq(0, 0, N)
     print(paper_count[-1], paper_count[0], paper_count[1], sep="\n")
-    
-solution()
+
+def solution2():
+    def div_and_conquer(y, x, cur_size):
+        if cur_size == 1:
+            return M[y][x]
+
+        div_size = cur_size // 3
+        results = []
+        for i in range(3):
+            for j in range(3):
+                n_y = y + div_size * i
+                n_x = x + div_size * j
+                results.append(div_and_conquer(n_y, n_x, div_size))
+        if None not in results and all(results[0] == result for result in results):
+            return results[0]
+        else:
+            for result in results:
+                if result is None:
+                    continue
+                paper_count[result] += 1
+            return None
+
+    N = int(input())
+    M = [list(map(int, input().split())) for _ in range(N)]
+    paper_count = {-1: 0, 0: 0, 1: 0}
+    result = div_and_conquer(0, 0, N)
+    if result is not None:
+        paper_count[result] += 1
+    print(paper_count[-1], paper_count[0], paper_count[1], sep="\n")
+
+solution2()
