@@ -22,5 +22,25 @@ def solution():
                     dp[i][j] = min(dp[i][j], dp[i][m] + dp[m + 1][j] + acc_sum[j] - (acc_sum[i - 1] if i - 1 >= 0 else 0))  # i가 0 인 경우 여기서 문제가 된다.
         print(dp[0][K - 1])
 
+def solution2():
+    T = int(input())
+    for _ in range(T):
+        K = int(input())
+        files = list(map(int, input().split()))
+        sums = [0] * K
+        sums[0] = files[0]
+        for idx, file in enumerate(files[1:], start=1):
+            sums[idx] = sums[idx - 1] + file
+        dp = [[int(1e9)] * K for _ in range(K)]
+        # 거리가 0일때는 합치는 비용이 없지.
+        for k in range(K):
+            dp[k][k] = 0
+        # 이제 거리가 1이상일때다.
+        for step in range(1, K):
+            for i in range(K - step):
+                j = i + step
+                for m in range(i, j):
+                    dp[i][j] = min(dp[i][j], dp[i][m] + dp[m + 1][j] + sums[j] - (sums[i - 1] if i - 1 >= 0 else 0))
+        print(dp[0][K-1])
 
-solution()
+solution2()
