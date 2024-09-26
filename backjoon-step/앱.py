@@ -15,8 +15,49 @@ def solution():
                 min_cost = min(min_cost, cost)
     print(min_cost)
 
+def solution2():
+    N, M = map(int, input().split())
+    used_memories = list(map(int, input().split()))
+    de_activate_costs = list(map(int, input().split()))
+    max_cost = N * max(de_activate_costs) + 1
+    dp = [[0] * N for _ in range(max_cost)]
+    for cost in range(max_cost):
+        for i in range(N):
+            if cost < de_activate_costs[i]:
+                dp[cost][i] = max(dp[cost][i], dp[cost][i - 1] if i - 1 >= 0 else 0)
+            else:  # cost >= de_activate_costs[i]:
+                dp[cost][i] = max(dp[cost][i - 1], used_memories[i] + (dp[cost - de_activate_costs[i]][i - 1] if i - 1 >= 0 else 0))
+            if dp[cost][i] >= M:
+                print(cost)
+                exit()
 
-solution()
+
+def solution3():
+    N, M = map(int, input().split())
+    used_memories = list(map(int, input().split()))
+    de_activate_costs = list(map(int, input().split()))
+
+    # Maximum cost to be considered
+    max_cost = sum(de_activate_costs)
+
+    # DP array to track maximum memory that can be freed for a given cost
+    dp = [0] * (max_cost + 1)
+
+    # Fill the dp array
+    for i in range(N):
+        cost = de_activate_costs[i]
+        memory = used_memories[i]
+        for current_cost in range(max_cost, cost - 1, -1):
+            dp[current_cost] = max(dp[current_cost], dp[current_cost - cost] + memory)
+
+    # Find the minimum cost to achieve at least M memory
+    for cost in range(max_cost + 1):
+        if dp[cost] >= M:
+            print(cost)
+            break
+
+
+solution2()
 # 냅색문제랑 비슷한거 같은데?
 # 문제를 다르게 생각하면 최소 M이상의 메모리를 가져야할때, 최소의 비용을 구하여라!
 # 뭔가 이상하다... 최소비용 그거 만들 수 있는 것이어야 하잖아?
