@@ -14,6 +14,21 @@ def solution():
         print("FRULA")
 
 
-solution()
+def solution2():
+    phrase = input()
+    explode_word = input()
+    explode_len = len(explode_word)
+    stack = []
+
+    for ch in phrase:
+        stack.append(ch)
+        while len(stack) >= explode_len and all(stack[-i] == explode_word[-i] for i in range(1, explode_len+1)):
+            # stack = stack[-explode_len:] 이것보다는 아래것이 더 시간복잡도가 낮구나...?
+            for _ in range(explode_len):
+                stack.pop()
+    print("".join(stack) if stack else "FRULA")
+
+
+solution2()
 # 시간초과가 발생하네...?
 # 와 String += String 은 시간복잡도가 N^2 이 되겠네
