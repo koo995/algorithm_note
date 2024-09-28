@@ -39,13 +39,46 @@ def solution2():  # 생각해보니 위의 풀이는... 계속해서 stack 의 �
                 stack.pop()
                 num = 1
         # height 가 더 작다면? 가능한 케이스는 인접한 녀석 딱 하나밖에 없지.
-        if stack:
+        if stack:  # 여기서 당연히 if stack and stack[-1] > height
             count += 1
         stack.append((height, num))
 
     print(count)
 
+
+def solution3():
+    N = int(input())
+    person_heights = [int(input()) for _ in range(N)]
+
+    stack = []
+    visible_pairs = 0
+
+    for height in person_heights:
+        count_same_height = 1  # 바로 현재의 height에서 바라볼 수 있는 녀석들을 카운트하니까 마지막에 stack에 남아있어도 문제가 없군
+
+        # 스택의 마지막 사람보다 현재 키가 크거나 같을 때 처리
+        while stack and stack[-1][0] <= height:
+            # 이 부분은 현재의 height에서 볼수있는 녀석들을 체크해 나가는 부분이다.
+            prev_height, prev_count = stack.pop()
+            visible_pairs += prev_count
+
+            # 같은 키라면 같은 그룹으로 묶어 처리
+            if prev_height == height:
+                count_same_height += prev_count
+
+        # 스택이 비어있지 않다면, 현재 사람은 이전 사람을 볼 수 있음
+        if stack:  # 정확히는 stack and stack[-1][0] > height
+            visible_pairs += 1
+
+        # 현재 사람의 키와 같은 그룹의 수를 스택에 추가
+        stack.append((height, count_same_height))
+
+    print(visible_pairs)
+
+
 solution2()
+
+solution3()
 # 13 8877766777799 이 상황에서 틀린다.
 # 어떤 예외상황이 발생할 수 있을까?
 # stack 안에 있는 녀석들은 모두 쌍을 만들 수 있는거 아닐까
