@@ -44,4 +44,42 @@ def solution():
     else:
         print(-1)
 
-solution()
+def solution2():
+    from collections import deque
+
+    M, N = map(int, input().split())  # 가로, 세로
+    tomato_box = [list(map(int, input().split())) for _ in range(N)]
+    count = 0  # 단 토마토가 모두 익지 못한다면 -1이 되어야 한다.
+    ripe_tomatoes = deque()
+    empty_count = 0
+    unripe_count = 0
+    for i in range(N):
+        for j in range(M):
+            if tomato_box[i][j] == 1:
+                ripe_tomatoes.append((i, j, 0))
+            elif tomato_box[i][j] == -1:
+                empty_count += 1
+            else:
+                unripe_count += 1
+
+    dy = [0, 0, 1, -1]
+    dx = [1, -1, 0, 0]
+    if len(ripe_tomatoes) == M * N - empty_count:
+        return count
+    else:
+        while ripe_tomatoes:
+            ripe_tomato = ripe_tomatoes.popleft()
+            y = ripe_tomato[0]
+            x = ripe_tomato[1]
+            count = ripe_tomato[2]
+            for i in range(4):
+                n_y = y + dy[i]
+                n_x = x + dx[i]
+                if not (0 <= n_y < N and 0 <= n_x < M and tomato_box[n_y][n_x] == 0):
+                    continue
+                tomato_box[n_y][n_x] = 1
+                unripe_count -= 1
+                ripe_tomatoes.append((n_y, n_x, count + 1))
+        return count if unripe_count == 0 else -1
+
+print(solution2())
