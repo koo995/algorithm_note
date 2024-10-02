@@ -22,4 +22,51 @@ def solution():
     # 만족하는 녀석이 없다
     print(min_len if min_len != INF else 0)
 
-solution()
+def solution2():
+    from collections import deque
+
+    N, S = map(int, input().split())  # N개짜리 수열리고 합이 S이상 되는 가장 짧은 수열을 찾는 것
+    numbers = list(map(int, input().split()))
+    min_length = int(1e6) + 1
+    pointer = -1
+    current_sum = 0
+    index_queue_of_sum = deque()
+    while pointer < N:
+        if current_sum >= S:
+            min_length = min(min_length, len(index_queue_of_sum))
+            first_index = index_queue_of_sum.popleft()
+            current_sum -= numbers[first_index]
+            continue
+        pointer += 1
+        if pointer >= N:
+            break
+        current_sum += numbers[pointer]
+        index_queue_of_sum.append(pointer)
+
+    print(min_length if min_length != int(1e6) + 1 else 0)
+
+def solution3():
+    N, S = map(int, input().split())  # N개의 수열에서 합이 S 이상이 되는 가장 짧은 부분 수열 찾기
+    numbers = list(map(int, input().split()))
+
+    min_length = float('inf')
+    left = 0
+    current_sum = 0
+
+    # 슬라이딩 윈도우를 위한 right 포인터 이동
+    for right in range(N):
+        current_sum += numbers[right]
+
+        # 합이 S 이상인 부분 수열을 찾으면, left 포인터를 이동하여 최소 길이를 찾음
+        while current_sum >= S:
+            min_length = min(min_length, right - left + 1)
+            current_sum -= numbers[left]
+            left += 1
+
+    # min_length가 업데이트되지 않은 경우, 부분 수열의 합이 S 이상인 경우가 없음
+    print(min_length if min_length != float('inf') else 0)
+
+solution2()
+
+
+solution2()
