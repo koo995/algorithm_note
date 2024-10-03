@@ -44,8 +44,51 @@ def solution():
             min_dist += dist
     print(min_dist)
 
+def solution3():
+    import math
 
-solution()
+    def find_parent(node):
+        if node == parent_table[node]:
+            return node
+        parent_table[node] = find_parent(parent_table[node])
+        return parent_table[node]
+
+    def union(node_a, node_b):  # 어짜피 node_1, node_2 는 연결되어 있고... 연결하지 못하는 경우는 이미 연결된 경우구나
+        parent_a = find_parent(node_a)
+        parent_b = find_parent(node_b)
+        if parent_a == parent_b:
+            return False
+        if parent_a < parent_b:
+            parent_table[parent_b] = parent_a  # 이야... 여기서 헷갈렸네... parent_table[node_b] 이렇게 되어 있으면... 부모가 연결이 안되어 버리지...
+        else:
+            parent_table[parent_a] = parent_b
+        return True
+
+    def get_distance(node1: tuple, node2: tuple) -> float:
+        x1, y1 = node1
+        x2, y2 = node2
+        return round(math.sqrt((x2 - x1)**2 + (y2 - y1)**2), 2)
+
+    n = int(input())
+    star_points = [tuple(map(float, input().split())) for _ in range(n)]
+
+    # 어쨋든 모든 거리를 다 구해보자
+    lines_with_dist = []
+    for star1 in range(n):
+        for star2 in range(star1 + 1, n):
+            star1_point = star_points[star1]
+            star2_point = star_points[star2]
+            lines_with_dist.append((star1, star2, get_distance(star1_point, star2_point)))
+
+    lines_with_dist.sort(key=lambda line:line[2])
+    parent_table = [i for i in range(n)]
+    cost = 0
+    for node1, node2, dist in lines_with_dist:
+        if union(node1, node2):
+            cost += dist
+    print(cost)
+
+solution3()
 
 
 # 모든 거리를 구하는 것 4950 밖에 안하니까 할만하다.
