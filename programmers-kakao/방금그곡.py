@@ -42,3 +42,45 @@ def solution(my_melody, music_infos):
             answers.append((music_name, duration, s_time))
     answers.sort(key=lambda answer: (-answer[1], answer[2]))
     return answers[0][0] if answers else "(None)"
+
+
+def solution2(my_melody, music_infos):
+    def encode(melody):
+        melody_lst = []
+        idx = 0
+        while idx < len(melody):
+            if idx + 1 < len(melody) and melody[idx] + melody[idx + 1] in alphas:
+                melody_lst.append(alphas[melody[idx] + melody[idx + 1]])
+                idx += 2
+                continue
+            melody_lst.append(alphas[melody[idx]])
+            idx += 1
+        return "".join(melody_lst)
+
+    def get_played_melody(length, melody):
+        melody_encoded = encode(melody)
+        cycle = length // len(melody_encoded)
+        left_length = length % len(melody_encoded)
+        return melody_encoded * cycle + melody_encoded[:left_length]
+
+    alphas = {"C": "c", "C#": "C", "D": "d", "D#": "D", "E": "e", "F": "f", "F#": "F", "G": "g", "G#": "G", "A": "a",
+              "A#": "A", "B": "b", "E#": "E", "B#": "B"}
+    answers = []
+    for music_info in music_infos:
+        start_time, end_time, music_title, music_melody = music_info.split(",")
+        start_minutes_time = int(start_time[0:2]) * 60 + int(start_time[3:5])
+        end_minutes_time = int(end_time[0:2]) * 60 + int(end_time[3:5])
+        played_time = end_minutes_time - start_minutes_time
+        played_melody = get_played_melody(played_time, music_melody)
+        # 이제 my_melody가 played_melody 안에 포함되는지 체크해야한다.
+        # 아하... # 때문에 문제가 생기네?
+        my_melody_encoded = encode(my_melody)
+        # 정확히는 부분집합인지 판단해야하는데... 어케하지?
+        if my_melody_encoded in played_melody:
+            answers.append((played_time, start_minutes_time, music_title))
+    answers.sort(key=lambda info: (-info[0], info[1]))
+    return answers[0][2] if answers else "(None)"
+
+
+
+
