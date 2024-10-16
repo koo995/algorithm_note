@@ -40,9 +40,9 @@ def solution(expression):
     return answer
 
 
-from itertools import permutations
 
 # 2번째 풀이..
+
 def calc_operator(operator, num1, num2):
     if operator == "*":
         return num1 * num2
@@ -64,6 +64,8 @@ def calc(priority, operands, operators):
 
 
 def solution(expression):
+    from itertools import permutations
+
     operands = []
     operators = []
     temp = ""
@@ -81,7 +83,7 @@ def solution(expression):
     return max_value
 
 
-# 3번째 풀이... 이런 방법도 있다...! eval이란거 신기하네
+# 3번째 풀이... 이런 방법도 있다...! eval이란거 신기하네 그렇지만.. 앞선 풀이보단 속도가 느리다.
 from itertools import permutations
 
 def div_conqer(priority, expression, n):
