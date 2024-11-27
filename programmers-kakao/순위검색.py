@@ -63,3 +63,42 @@ def solution2(infos, queries):  # info는 5만이하, query는 10만이하 점�
         idx = bisect_left(temp, int(score))
         result.append(len(temp) - idx)
     return result
+
+
+from collections import defaultdict
+from bisect import bisect_left
+
+# 이 방법은 효율성을 통과한다.
+# product을 써도 상관은 없다. 그래도 효율성은 통과하더라. generator가 필요한건 아님
+# 다만 sort을 쿼리 처리하기전에 해준것이 효율성에 큰 영향을 미친거 같다. queries가 최대 10만인데 10만번의 정렬보다 table의 키를 미리 정렬해두는게 좋은듯
+def solution3(infos, queries):
+    table = defaultdict(list)
+
+    # 테이블 생성 및 정렬
+    for info in infos:
+        lang, role, pos, food, score = info.split(" ")
+        score = int(score)
+        for key in generate_keys(lang, role, pos, food):
+            table[key].append(score)
+
+    for key in table:
+        table[key].sort()
+
+    # 쿼리 처리
+    result = []
+    for query in queries:
+        query = query.replace(" and ", " ").split()
+        lang, role, pos, food, score = query[0], query[1], query[2], query[3], int(query[4])
+        temp = table[lang + role + pos + food]
+        idx = bisect_left(temp, score)
+        result.append(len(temp) - idx)
+
+    return result
+
+
+def generate_keys(lang, role, pos, food):
+    for l in [lang, "-"]:
+        for r in [role, "-"]:
+            for p in [pos, "-"]:
+                for f in [food, "-"]:
+                    yield l + r + p + f
