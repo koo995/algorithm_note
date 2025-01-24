@@ -56,7 +56,7 @@ class Solution3:
             max_left = dfs(node.left)
             max_right = dfs(node.right)
             self.longest = max(self.longest, max_left + max_right)
-            return max(max_left, max_right) + 1
+            return max(max_left, max_right) + 1  # 오 여기서 계속 증가가 이루어지며 깊이가 전달되는 구나
 
         dfs(root)
         return self.longest
