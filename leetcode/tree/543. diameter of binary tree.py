@@ -44,3 +44,19 @@ class Solution2:
 
         dfs(root)
         return self.longest
+
+
+class Solution3:
+    longest = 0
+    def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:
+        def dfs(node):
+            if not node:
+                return 0
+
+            max_left = dfs(node.left)
+            max_right = dfs(node.right)
+            self.longest = max(self.longest, max_left + max_right)
+            return max(max_left, max_right) + 1
+
+        dfs(root)
+        return self.longest
