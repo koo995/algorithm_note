@@ -49,18 +49,84 @@ class Solution:
         graph = [[] for _ in range(numCourses)]
         for dest, start in prerequisites:
             graph[start].append(dest)
-        no_cycle = [False for _ in range(numCourses)]
+        no_cycle = [False for _ in range(numCourses)]  # 이게 지금은 모두 사이클을 이룬다고 되어 있는 것이구나
         for start in range(numCourses):
-            if no_cycle[start]:
+            if no_cycle[start]: # 사이클을 이루지 않는 다면 넘어간다.
                 continue
-            if is_cycle(start, [0 for _ in range(numCourses)]):
+            if is_cycle(start, [0 for _ in range(numCourses)]):  # 사이클을 이룬다면 스케쥴 할 수 없으니까 정답인 False를 반환
                 return False
-            no_cycle[start] = True
+            no_cycle[start] = True # 사이클을 이루지 않는 다면 탐색한 노드를 True로 할당
         return True
         # 아아... 역시 끊어져 있는 경우가 발생할 수 있다.
 
 
-        
+from collections import deque
+
+# 이거는 위상 정렬을 이용한 것임.
+class Solution2:
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        in_degree = [0] * numCourses
+
+        graph = [[] for _ in range(numCourses)]
+        for a, b in prerequisites:
+            graph[b].append(a)  # b를 먼저 들어야 a도 들을 수 있다.
+            in_degree[a] += 1
+
+        q = deque()
+
+        # 이제 진입차수가 0인 모든 노드를 큐에 넣는다.
+        for num in range(numCourses):
+            if in_degree[num] == 0:
+                q.append(num)
+
+        # 이제 큐에서 꺼내면서 확인한다.
+        while q:
+            now = q.popleft()
+
+            for n_node in graph[now]:
+                in_degree[n_node] -= 1
+                if in_degree[n_node] == 0:
+                    q.append(n_node)
+                elif in_degree[n_node] < 0:
+                    return False
+
+        for i in range(numCourses):
+            if in_degree[i] != 0:
+                return False
+        return True
+
+
+# 이거는 책에서 본 것이다.
+class Solution4:
+    def canFinish(self, numCourses: int, prerequisites: list[list[int]]) -> bool:
+        def is_cycle(node) -> bool:
+            if node in traced:
+                return True
+
+            # 현재의 호출 스택에 포함되어 있지는 않지만 방문 했던 녀석이라면? 그 말은 그때 탐색으로 사이클을 이루지 않음을 확인했다는 것이네
+            if node in visited:
+                return False
+
+            traced.add(node)
+            for n_node in graph[node]:
+                if is_cycle(n_node):
+                    return True
+            visited.add(node)
+            traced.remove(node)
+            return False
+
+        graph = [[] for _ in range(numCourses)]
+        for a, b in prerequisites:
+            graph[a].append(b)
+
+        visited = set()  # 이 부분이 마음에 안들어서 특정 노드가 사이클을 이루는지 안 이루는지 체크해둘려고 했는데
+        traced = set()
+        for i in range(numCourses):
+            if is_cycle(i):
+                return False
+        return True
+
+
 # 그래프의 각 노드들에 대해서 순환을 이루면 안된다가 문제이다. 그 말은 서로 순환을 이루지 않는 다른 집합들이 있을 수 있단것이지
 # 각 노드들은 본인을 부모로 가지고 있고... 서로 부모가 다르다면 사이클을 이루지 않는다가 되는 것이다.
 # 나는 처음 호출한 녀석이 재귀적으로 올라가다가 원래 녀석을 닿으면 뭔가를 어떻게 반환할려고 했는데 실패함
