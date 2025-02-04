@@ -9,43 +9,58 @@ def catch_shark(fisher):
             return result
     return result
 
-def change_direction(d):
-    if d == 1:
-        return 2
-    elif d == 2:
-        return 1
-    elif d == 3:
-        return 4
-    elif d == 4:
-        return 3
-
 def move(sha, spe):
     y, x = shark_point[sha]
-
     # 기존의 위치에서 제거한다.
     shark_board[y][x].remove(sha)
 
-    while spe > 0:
-        d = shark_direction[sha]
-        dy, dx = directions[d]
-        n_y = y + dy
-        n_x = x + dx
-        if not 1 <= n_y <= R:
-            # 여기서... 방향이 바뀌어야하구나?
-            n_d = change_direction(d)
-            shark_direction[sha] = n_d
-            continue
-        if not 1 <= n_x <= C:
-            n_d = change_direction(d)
-            shark_direction[sha] = n_d
-            continue
-        y = n_y
-        x = n_x
-        spe -= 1
-    # 자 이제 거리 이동은 다 했으니까...
-    # 옮긴 자리를 체크해줘야한다.
-    shark_point[sha] = [y, x]
+    # 이제부터 이동한 위치를 구해야한다.
+    # 시작지점을 0으로 해야 올바른 모듈로연산이 된다. 안그러면 덧셈 해야함
+    d = shark_direction[sha]
+    if d == 1 or d == 2: #위 아래
+        cycle = 2 * (R - 1)
+        pos = y
+        dir_sign = -1 if d == 1 else 1
+        pos += dir_sign * (spe % cycle)
+        if pos < 1:
+            pos = 1 + (1 - pos)
+            dir_sign *= -1
+        elif pos >= R:
+            pos = R - (pos - R)
+            dir_sign *= -1
+        # 한번더 처리
+        if pos < 1:
+            pos = 1 + (1 - pos)
+            dir_sign *= -1
+        elif pos >= R:
+            pos = R - (pos - R)
+            dir_sign *= -1
+        y = pos
+        new_d = 1 if dir_sign == -1 else 2
+    else:  # 오른쪽 왼쪽
+        cycle = 2 * (C - 1)
+        pos = x
+        dir_sign = 1 if d == 3 else -1
+        pos += dir_sign * (spe % cycle)
+        if pos < 1:
+            pos = 1 + (1 - pos)
+            dir_sign *= -1
+        elif pos >= C:
+            pos = C - (pos - C)
+            dir_sign *= -1
+        # 한번 더 처리한다.
+        if pos < 1:
+            pos = 1 + (1 - pos)
+            dir_sign *= -1
+        elif pos >= C:
+            pos = C - (pos - C)
+            dir_sign *= -1
+        x = pos
+        new_d = 3 if dir_sign == +1 else 4
+
     shark_board[y][x].append(sha)
+    shark_point[sha] = [y, x]
+    shark_direction[sha] = new_d
 
 def remove_double():
     for i in range(R + 1):
@@ -60,7 +75,6 @@ def remove_double():
 R, C, M = map(int, input().split())
 shark_info = [map(int, input().split()) for _ in range(M)]
 
-directions = {1: (-1, 0), 2: (1, 0), 3: (0, 1), 4: (0, -1)}
 
 # 각 상어는 크기로 구분하자
 shark_direction, shark_point, shark_speed = {}, {}, {}
