@@ -70,5 +70,16 @@ def solution4(citations):
             h_index = max(h_index, h)
     return h_index
 
-
+def solution5(citations):
+    citations.sort()
+    max_h = 0
+    for h in range(1001):
+        # 이제 h값이 인덱스가 될지 판단하면 될듯?
+        for i, citation in enumerate(citations):
+            if citation < h:
+                continue
+            # 여기서부터는 citation이 h이상인데...
+            if len(citations[i:]) >= h and len(citations[:i]) <= h:
+                max_h = max(max_h, h)
+    return max_h
 # 예전에는 이문제를 어떻게 가야할지도 모르겠던데... 지금은 그래도 그냥 모두 탐색해도 될것같다는 생각이 들었다..
