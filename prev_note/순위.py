@@ -51,3 +51,20 @@ print(solution2(5, [[4, 3], [4, 2], [3, 2], [1, 2], [2, 5]]))
 
 # 플로이드 워셜 알고리즘이라..
 # 바킹독의 알고리즘 강의 듣기
+
+# 이 문제 위상정렬을 한번 응용해 보자.
+def solution3(n, results):
+    graph = [[0] * (n + 1) for _ in range(n + 1)]
+    for win, lose in results:
+        graph[lose][win] = 1
+        graph[win][lose] = -1
+    for k in range(1, n + 1):
+        for i in range(1, n + 1):
+            for j in range(1, n + 1):
+                if (i == j) or (graph[i][k] == 1 and graph[k][j] == 1):
+                    graph[i][j] = 1
+                    continue
+                # 4에서 5로도 갈 수 없다는 것을 알려줘야 겠구나. 이 부분이 잘못되었어.
+                if graph[i][k] == -1 and graph[k][j] == -1:
+                    graph[i][j] = -1
+    return n - len([1 for node in graph[1:] if 0 in node[1:]])
