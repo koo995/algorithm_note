@@ -47,3 +47,26 @@ in case multiple strings pass the above 3 conditions, return the one which is le
 
 sol = Solution()
 sol.removeDuplicateLetters("cbacdcbc")
+
+
+from string import ascii_lowercase
+from collections import Counter
+
+class Solution2:
+    def removeDuplicateLetters(self, s: str) -> str:
+        counter = Counter(s)
+
+        stack = []
+        seen = set()
+        for ch in s:
+            counter[ch] -= 1
+            if ch in seen:
+                continue
+
+            while stack and stack[-1] > ch and counter[stack[-1]] > 0:
+                prev = stack.pop()
+                seen.remove(prev)
+
+            stack.append(ch)
+            seen.add(ch)
+        return "".join(stack)
