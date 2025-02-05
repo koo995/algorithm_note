@@ -41,6 +41,24 @@ class Solution:
             result = max(result, len(q))
         return result
 
+    def lengthOfLongestSubstring4(self, s: str) -> int:
+        # 아하 연속된 녀석이어야 하구나?
+        # 그리고 모든 녀석이 나타날 필요는 없구나?
+        from collections import deque
+
+        q = deque()
+        seen = set()
+        answer = 0
+        for ch in s:
+            while ch in seen:
+                prev = q.popleft()
+                seen.remove(prev)
+
+            q.append(ch)
+            seen.add(ch)
+            answer = max(answer, len(q))
+        return answer
+
 
 sol = Solution()
 sol.lengthOfLongestSubstring("pwwkew")
