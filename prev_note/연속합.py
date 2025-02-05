@@ -51,4 +51,21 @@ def solution3():
         dp[i] = max(dp[i-1] + numbers[i], numbers[i])
     print(max(dp))
 
-solution3()
+def solution4():
+    # 이 문제의 핵심은 어디서부터 연속인지를 확실하게 정하는 것이다. 그 수단을 위해 2차원 dp을 이용하는 것이다.
+    n = int(input())
+    nums = list(map(int, input().split()))
+    INF = int(1e9)
+    dp = [[-INF] * n for _ in range(2)]
+    dp[0][0] = -INF
+    dp[1][0] = nums[0]
+
+    max_value = max(dp[0][0], dp[1][0])
+    for i in range(1, n):
+        dp[0][i] = nums[i]
+        dp[1][i] = max(dp[0][i - 1], dp[1][i - 1]) + nums[i]
+        max_value = max(max_value, dp[0][i], dp[1][i])
+
+    print(max_value)
+
+solution4()
