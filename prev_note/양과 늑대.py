@@ -282,3 +282,45 @@ def solution(info, edges):
 
     solve(1)
     return ans
+
+
+# 여기선ㄴ 2025년 2월 5일 풀이다.
+max_sheep = 0
+def solution10(info, edges):
+    global max_sheep
+
+    def dfs(node, sheep_wolf, have_to_visit):
+        global max_sheep
+
+        # 방문했으니까 동물을 획득한다.
+        animal = info[node]
+        if animal == 0:  # 양인 경우
+            sheep_wolf[0] += 1
+        else:  # 늑대인 경우
+            sheep_wolf[1] += 1
+
+        # 늑대가 같거나 많아진다면 여기서 양이 최대이다.
+        if sheep_wolf[0] <= sheep_wolf[1]:
+            max_sheep = max(max_sheep, sheep_wolf[0])
+            return
+
+            # 가야할 노드를 추가한다.
+        for n_node in graph[node]:
+            have_to_visit.append(n_node)
+
+        # 그렇다면 이제 여기서 차례로 방문을 시작한다.
+        for n_node in have_to_visit:
+            next_have_to_visit = have_to_visit.copy()
+            next_have_to_visit.remove(n_node)
+            dfs(n_node, sheep_wolf[:], next_have_to_visit)
+
+        # 더이상 방문할 곳이 없는 경우라면
+        max_sheep = max(max_sheep, sheep_wolf[0])
+
+    N = len(info)  # 총 노드의 갯수
+    graph = [[] for _ in range(N)]
+    for p, c in edges:
+        graph[p].append(c)
+
+    dfs(0, [0, 0], [])
+    return max_sheep
