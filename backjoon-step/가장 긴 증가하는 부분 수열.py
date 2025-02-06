@@ -35,4 +35,25 @@ def solution2():
                 dp[i] = max(dp[i], dp[j] + 1)
     print(max(dp))
 
-solution2()
+# 이 풀이는 뭐가 잘못된 것일까? 아... 첫 녀석부터 시작하는 것이 가장 긴 것이 아닐 수 있겠구나?
+# 생각보다 반복문으로 풀어나갈때 까다롭네?
+def solution3():
+    N = int(input())
+    A = list(map(int, input().split()))
+
+    if N == 1:
+        print(1)
+        exit()
+    dp = [0] * N
+    dp[0] = 1
+    for i in range(1, N):
+        for j in range(i):
+            if A[j] < A[i]:
+                dp[i] = max(dp[i], dp[j] + 1)
+            else:
+                dp[i] = max(dp[i], 1)
+
+    print(max(dp))
+
+
+solution3()
