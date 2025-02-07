@@ -56,8 +56,35 @@ def solution3():
             print(cost)
             break
 
+# 그냥 풀었을 땐 틀렸는데 여기서 예외 케이스를 어떻게 따져볼까?
+# 인덱스 조차 어떤 값을 나타낼 수 있다는 것은 매우 중요하다.
+# 어우... 초기에 max_cost을 막연히 100으로 잡았다가 문제를 못풀었고...
+# if 문 처리도 제대로 못해서 인덱스로 이상한게 들어갔네
+def solution4():
+    N, M = map(int, input().split())
 
-solution2()
+    used_memory = list(map(int, input().split()))
+    deactivate_cost = list(map(int, input().split()))
+    max_cost = sum(deactivate_cost) + 1
+
+    dp = [[0] * N for _ in range(max_cost)]
+    min_cost = int(1e9)
+    for cost in range(max_cost):
+        for i in range(N):
+            if cost >= deactivate_cost[i]:
+                dp[cost][i] = max(dp[cost][i - 1] if i - 1 >= 0 else 0,
+                                  used_memory[i] + (dp[cost - deactivate_cost[i]][i - 1] if i - 1 >= 0 else 0))
+            else: # 만약 i번째를 고려할 수 없다면?
+                dp[cost][i] = max(dp[cost][i], dp[cost][i - 1] if i - 1 >= 0 else 0)
+
+            # 자 이제 확부한 메모리를 비교해야 하는데
+            if dp[cost][i] >= M:
+                min_cost = min(min_cost, cost)
+
+    print(min_cost)
+
+
+solution4()
 # 냅색문제랑 비슷한거 같은데?
 # 문제를 다르게 생각하면 최소 M이상의 메모리를 가져야할때, 최소의 비용을 구하여라!
 # 뭔가 이상하다... 최소비용 그거 만들 수 있는 것이어야 하잖아?
