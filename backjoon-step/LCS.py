@@ -31,4 +31,20 @@ def solution2():
             max_value = max(max_value, dp[i][j])
     print(max_value)
 
-solution2()
+def solution3():
+    A = input()
+    B = input()
+
+    dp = [[0] * len(B) for _ in range(len(A))]
+
+    for i in range(len(A)):
+        for j in range(len(B)):
+            if A[i] == B[j]:
+                dp[i][j] = max(dp[i][j],  1 + (dp[i - 1][j - 1] if i - 1 >= 0 and j - 1 >= 0 else 0))
+            else:
+                dp[i][j] = max(dp[i - 1][j] if i - 1 >= 0 else 0, dp[i][j - 1] if j - 1 >= 0 else 0)
+    print(dp[len(A) - 1][len(B) - 1])
+
+
+
+solution3()
