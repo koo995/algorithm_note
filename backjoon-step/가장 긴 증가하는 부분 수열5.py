@@ -1,48 +1,56 @@
-l = [-1] * 20  # 왼쪽 자식
-r = [-1] * 20  # 오른쪽 자식
-val = []  # 양/늑대 값
-n = 0
-ans = 1
-vis = [0] * (1 << 17)  # vis[x] : 상태 x를 방문했는가?
+import sys
+import bisect
 
 
-def solve(state):
-    global ans
-    if vis[state]: return None
-    vis[state] = 1
-    # wolf : 늑대의 수, num : 전체 정점의 수
-    wolf, num = 0, 0
-    for i in range(n):
-        if state & (1 << i):
-            num += 1
-            wolf += val[i]
-    # 만약 늑대가 절반 이상일 경우 방문할 수 없는 상태이니 종료
-    if 2 * wolf >= num: return None
-    # 현재 state의 양의 수가 ans보다 클 경우 ans를 갱신
-    ans = max(ans, num - wolf)
+def solve():
+    input = sys.stdin.readline
+    N = int(input())
+    A = list(map(int, input().split()))
 
-    # 이제 다음 상태로 넘어갈 시간
-    for i in range(n):
-        if not state & (1 << i):
-            continue
-        # 현재 보고 있는 i번째 정점의 left가 있다면
-        if l[i] != -1:
-            solve(state | (1 << l[i]))
-        if r[i] != -1:
-            solve(state | (1 << r[i]))
+    # 꼬리값 리스트 (수열 값들을 직접 저장)
+    lis = []
+    # 길이가 i일 때, 마지막 원소가 되는 인덱스
+    lis_indices = [0] * N
+    # i번째 원소 바로 앞에 오는 원소 인덱스(역추적용)
+    parent = [-1] * N
 
+    length = 0  # lis의 현재 길이
+    for i in range(N):
+        # A[i]가 들어갈 위치 idx를 이진탐색으로 찾는다
+        idx = bisect.bisect_left(lis, A[i])
 
-def solution(info, edges):
-    global n, val
-    n = len(info)
-    val = info[:]
-    for u, v in edges:
-        if l[u] == -1:
-            l[u] = v
+        # idx가 lis의 길이면 => 더 긴 LIS를 만들 수 있음
+        if idx == length:
+            lis.append(A[i])
+            lis_indices[idx] = i
+            length += 1
         else:
-            r[u] = v
-    print(vis)
-    solve(1)
-    return ans
+            # 아니라면 => lis[idx]를 더 작은 값으로 교체
+            lis[idx] = A[i]
+            lis_indices[idx] = i
 
-solution([0,0,1,1,1,0,1,0,1,0,1,1], [[0,1],[1,2],[1,4],[0,8],[8,7],[9,10],[9,11],[4,3],[6,5],[4,6],[8,9]])
+        # 역추적을 위해 parent 정보 업데이트
+        # idx > 0 이어야 앞에 오는 원소가 존재하므로
+        if idx > 0:
+            parent[i] = lis_indices[idx - 1]
+
+    # 이제 length가 '가장 긴 증가부분수열'의 길이
+    # 그 마지막 원소의 인덱스는 lis_indices[length-1]
+    lis_end_index = lis_indices[length - 1]
+
+    # 거기서부터 parent를 거슬러 올라가면서 수열을 찾는다
+    answer = []
+    cur = lis_end_index
+    while cur != -1:
+        answer.append(A[cur])
+        cur = parent[cur]
+
+    # 뒤에서부터 모았으니 뒤집어준다
+    answer.reverse()
+
+    # 출력
+    print(length)
+    print(*answer)
+
+
+solve()
