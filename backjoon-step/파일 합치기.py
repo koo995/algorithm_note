@@ -1,3 +1,5 @@
+
+
 def solution():
     T = int(input())
     test_cases = [(int(input()), list(map(int, input().split()))) for _ in range(T)]
@@ -43,4 +45,35 @@ def solution2():
                     dp[i][j] = min(dp[i][j], dp[i][m] + dp[m + 1][j] + sums[j] - (sums[i - 1] if i - 1 >= 0 else 0))
         print(dp[0][K-1])
 
-solution2()
+
+def solution3():
+    T = int(input())
+    for _ in range(T):
+        K = int(input())
+        numbers = list(map(int, input().split()))
+        prefix_sum = [0] * K
+        prefix_sum[0] = numbers[0]
+        for i in range(1, K):
+            prefix_sum[i] = prefix_sum[i - 1] + numbers[i]
+
+        INF = int(1e9)
+        dp = [[INF] * K for _ in range(K)]  # dp값은 i~j까지 합하는데 드는 총 비용을 뜻한다.
+
+        # 먼저 길이가 1인 경우를 초기화하자.  아 이때는 합치는 비용이 없지... 이걸 놓쳤네...
+        for i in range(K):
+            dp[i][i] = 0
+
+        # 추가로 길이가 2인 경우를 초기화하자.
+        for i in range(1, K):
+            dp[i - 1][i] = prefix_sum[i] - (prefix_sum[i - 2] if i - 2 >= 0 else 0)
+
+        # 길이가 3인경우부터 탐색한다.
+        for size in range(3, K + 1):
+            for i in range(K - size + 1):
+                j = i + size - 1
+                for u in range(i, j):  # i와 j사이의 값이어야 한다.
+                    dp[i][j] = min(dp[i][j], dp[i][u] + dp[u + 1][j] + prefix_sum[j] - (prefix_sum[i - 1] if i - 1 >= 0 else 0))
+
+        print(dp[0][K - 1])
+
+solution3()
