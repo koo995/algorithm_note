@@ -40,6 +40,32 @@ def solution2():
             end = mid
     print(start)
 
+def solution3():
+    def check(m):
+        # 이 함수는 무엇을 하지?
+        # m이하의 수가 몇개인지 구한다.. 여기서 m도 포함한다.
+        count = 0
+        for i in range(1, N + 1):
+            count += min(N, m//i)
+        return count
 
+    N = int(input())  # 최소값은 1 최대값은 N*N
+    k = int(input())
+
+    start = 0
+    end = N * N
+    while start + 1 < end:
+        mid = (start + end) // 2
+        if check(mid) < k: # mid이하의 값이 몇개인가?
+            # mid 이하인 원소 개수가 K보다 적으므로
+            # K번째 수는 mid보다 더 커야 함
+            start = mid
+        else: # check(mid) >= K
+            # mid 이하인 원소 개수가 K 이상이므로
+            # K번째 수가 mid 이하일 수도 있음
+            # 결국 end**는 "K번째 수가 될 수 있는 가장 작은 후보"로 계속 갱신
+            end = mid
+
+    print(end)
 
 solution()
