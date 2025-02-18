@@ -147,4 +147,36 @@ def solution3(distance, rocks, n):
     # print("mid: ", mid)
 
 
+def solution4(distance, rocks, n):
+    def get_remove_rock_count(m):
+        # 거리의 최소가 m이 되고자한다.
+        prev = 0
+        count = 0
+        for i in range(len(rocks)):
+            if rocks[i] - prev < m:
+                count += 1
+                continue
+            prev = rocks[i]
+        return count
+
+    rocks = sorted(rocks) + [distance]
+    dist_btw_rocks = []
+
+    prev = 0
+    for i in range(len(rocks)):
+        dist_btw_rocks.append(rocks[i] - prev)
+        prev = rocks[i]
+
+    # 가장 특이한 점은 최소중에서 최대를 구하는 것이다.
+    start = min(dist_btw_rocks)  # 이것보다 작은 경우는 나타나지 않는다. 무지성으로 0으로 하지 말자.
+    end = int(1e9)  # 단순히 max(dist_btw_rocks)로 하면 거리가 더 큰 녀석이 나타날 수 있다.
+    while start + 1 < end:
+        mid = (start + end) // 2
+        if get_remove_rock_count(mid) <= n:
+            start = mid
+        else:
+            end = mid
+    return start
+
+
 print(solution2(25, [2, 14, 11, 21, 17], 2))
