@@ -153,6 +153,43 @@ def solution4(arr):
     return max_dp[0][-1]
 
 
+def solution5(arr):
+    operands, operators = [], []
+    for ch in arr:
+        if ch.isnumeric():
+            operands.append(int(ch))
+            continue
+        operators.append(ch)
+
+    N = len(operands)
+
+    INF = int(1e9)
+    max_dp = [[-1 * INF] * N for i in range(N)]
+    min_dp = [[INF] * N for i in range(N)]
+
+    # step이 0인경우 초기화
+    for i in range(N):
+        max_dp[i][i] = operands[i]
+        min_dp[i][i] = operands[i]
+
+    # step이 1인경우 초기화
+    for i in range(len(operators)):
+        max_dp[i][i + 1] = operands[i] + (operands[i + 1] if operators[i] == "+" else -1 * operands[i + 1])
+        min_dp[i][i + 1] = operands[i] + (operands[i + 1] if operators[i] == "+" else -1 * operands[i + 1])
+
+    for step in range(2, N):
+        for i in range(N - step):
+            j = i + step
+            for k in range(i, j):  # k는 i ~ j까지 가능하다.
+                # 그렇다면 연산자는 무엇으로 할 것이냐..?
+                if operators[k] == "+":
+                    max_dp[i][j] = max(max_dp[i][j], max_dp[i][k] + max_dp[k + 1][j])
+                    min_dp[i][j] = min(min_dp[i][j], min_dp[i][k] + min_dp[k + 1][j])
+                else:  # 빼기인 경우..
+                    max_dp[i][j] = max(max_dp[i][j], max_dp[i][k] - min_dp[k + 1][j])
+                    min_dp[i][j] = min(min_dp[i][j], min_dp[i][k] - max_dp[k + 1][j])
+    return max_dp[0][N - 1]
+
 # solution3(["5", "-", "3", "+", "1", "+", "2", "-", "4"])
 # [5, -3, 1, 2, -4]
 # 대충 점화식은 안다고 해도.. dp을 구성하는 이유는 연산량을 줄이기 위함인데, for문을 어떻게 배치하냐도 엄청나게 중요하잖아?
