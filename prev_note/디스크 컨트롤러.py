@@ -176,3 +176,44 @@ print(solution4([[0, 3], [1, 9], [2, 6]]))
 # 오류는 시간초과이다. while문에서 문제가 발생했다고 좁히자. 1번째? 두번째? q가 있다면 반드시 뽑아낸다. 그렇다면 jobs의 존재에서 문제가 발생했다. 아 케이스 하나가 있겠다. jobs가 남아있는데 그녀석이 start_time보다 큰 경우일 것이다.
 # 하드디스크가 작업을 수행하고 있지 않을 때에는 먼저 요청이 들어온 작업부터 처리합니다. 이 부분에서 문제 발생. 어떻게 처리하지? 현재 디스크에 아무것도 없는 상태를 어떻게 처리할까가 문제다.
 # q는 비어있고 jobs는 남아있는 경우가 현재 시간이 아직 안된 것이니까 현재 시간을 맞춰준다.
+
+
+import heapq
+
+
+def solution6(jobs: list):
+    # 우선순위는 작업의 소요시간이 짧은 것, 작업의 요청시각이 빠른 것, 작업의 번호가 작은것
+    N = len(jobs)
+    jobs.sort()
+    total_turnaround_time = []
+
+    h = []
+    start_time = jobs[0][0]
+    next_job_pointer = 0
+    for i in range(N):
+        if jobs[i][0] == start_time:
+            heapq.heappush(h, (jobs[i][1], jobs[i][0], i))
+            next_job_pointer = i + 1
+
+    cur_time = start_time
+    while h or next_job_pointer < N:  # 생각해보니.. 끝났는데 아무것도 없다면?
+        if not h:
+            job = jobs[next_job_pointer]
+            heapq.heappush(h, (job[1], job[0], next_job_pointer))
+            next_job_pointer += 1
+            cur_time = job[0]  # 중간에 빈시간이 있고 그 이후에 요청이 온다면 시작시간을 갱신한다.
+        execution_time, req_time, idx = heapq.heappop(h)
+        # 이 값은 실행하고 난 이후의 시간이다.
+        cur_time += execution_time
+        total_turnaround_time.append(cur_time - req_time)
+
+        temp_next_job_pointer = next_job_pointer
+        for pointer in range(next_job_pointer, N):
+            job = jobs[pointer]
+            if job[0] <= cur_time:
+                heapq.heappush(h, (job[1], job[0], pointer))
+                temp_next_job_pointer = pointer + 1
+        next_job_pointer = temp_next_job_pointer
+
+    avg_turnaround_time = sum(total_turnaround_time) // N
+    return avg_turnaround_time
