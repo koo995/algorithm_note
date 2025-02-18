@@ -64,5 +64,20 @@ def solution3(text: str, skip: str, index: int):
     return result
 
 
+def solution4(text: str, skip: str, index: int):
+    from string import ascii_lowercase
+
+    alpha = set(ascii_lowercase)
+    alpha -= set(skip)
+    alpha = sorted(list(alpha))
+
+    dic_alpha = {ch: idx for idx, ch in enumerate(alpha)}
+    l = len(dic_alpha)
+    ans = ""
+    for ch in text:
+        ch_idx = dic_alpha[ch]
+        ans += alpha[(ch_idx + index) % l]
+    return ans
+
 
 print(solution2("aukks", "wbqd", 5))
