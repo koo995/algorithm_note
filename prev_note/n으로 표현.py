@@ -125,5 +125,30 @@ def solution3(N, number):
     return dp[number] if dp[number] <= 8 else -1
 
 
+def solution4(N, number):
+    min_dp = [10] * int(1e8)
+    list_per_count = {i: set() for i in range(1, 9)}
+    for i in range(1, 9):
+        value = int(str(N) * i)
+        min_dp[value] = i
+        list_per_count[i].add(value)
+    # 이제부터 2개이상 사용한 경우를 따져봐야한다.
+    for n_count in range(2, 9):
+        for k in range(1, n_count):
+            a_lst = list_per_count[k]
+            b_lst = list_per_count[n_count - k]
+            # 여기서 각자의 list로 만들 수 있는 값들을 구해야겠다.
+            # 흠... 조금 중복되는 값들이 있는데...
+            # 이것의 시간복잡도를 어떻게 계산할까...
+            for a in a_lst:
+                for b in b_lst:
+                    values = {a + b, a - b, a // b if b != 0 else 0, a * b}
+                    for value in values:
+                        min_dp[value] = min(min_dp[value], n_count)
+                        list_per_count[n_count].add(value)
+    return -1 if min_dp[number] > 8 else min_dp[number]
+
+
+
 
 
