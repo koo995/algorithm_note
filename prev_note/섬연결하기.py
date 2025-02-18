@@ -118,6 +118,38 @@ def solution3(n, costs: list):
     return total_cost
 
 
+def solution4(n, costs: list):
+    # 최소의 비용으로 모든 섬을 연결해야한다.
+    # 그렇다면 생각을 해보자. 가장 최소의 비용을 가진 다리부터 건설하면 어떨까?
+    # 그렇게 건설해 나가는데... 이미 연결된 다리를 다시 연결한다면? 그러니까 사이클을 이룬다면?
+    # 연결을 안하면 된다.
+    def find_parent(node):
+        if node == parent[node]:
+            return node
+        parent[node] = find_parent(parent[node])
+        return parent[node]
+
+    def union(a, b):
+        p_a = find_parent(a)
+        p_b = find_parent(b)
+        if p_a > p_b:
+            parent[p_a] = p_b
+            return True
+        elif p_a < p_b:
+            parent[p_b] = p_a
+            return True
+        else:
+            return False
+
+    parent = [i for i in range(n)]
+    costs.sort(key=lambda cost: cost[2])
+    total_cost = 0
+    for node_a, node_b, cost in costs:
+        if union(node_a, node_b):
+            total_cost += cost
+    return total_cost
+
+
 print(solution2(4, [[0, 1, 1], [0, 2, 2], [1, 2, 5], [1, 3, 1], [2, 3, 8]]))
 print(
     solution2(
