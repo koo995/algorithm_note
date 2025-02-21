@@ -14,3 +14,18 @@ class Solution:
             root.val = self.val
             self.bstToGst(root.left)
         return root
+
+class Solution2:
+    def bstToGst(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        def postorder(root, s):
+            if not root:
+                return None, s
+
+            right, s = postorder(root.right, s)
+            val = root.val + s
+            s = val
+            left, s = postorder(root.left, s)
+            return TreeNode(val, left, right), s
+
+        result, _ = postorder(root, 0)
+        return result
