@@ -25,3 +25,33 @@ class Solution:
                     new_leaf_nodes.append(neighbor)
             leaf_nodes = new_leaf_nodes
         return leaf_nodes
+
+
+class Solution2:
+    def findMinHeightTrees(self, n: int, edges: List[List[int]]) -> List[int]:
+        if n == 1:
+            return [0]
+        graph = [[] for _ in range(n)]
+
+        for a, b in edges:
+            graph[a].append(b)
+            graph[b].append(a)
+
+        leaf_nodes = []
+        # 리프노드들을 구해보자.
+        for node in range(n):
+            if len(graph[node]) == 1:
+                leaf_nodes.append(node)
+
+        while n > 2:  # 남은 노드의 수가 1개 또는 2개가 되면 그때가 끝이다.
+            n -= len(leaf_nodes)
+
+            new_leaf_nodes = []
+            for leaf_node in leaf_nodes:
+                n_node = graph[leaf_node].pop()
+                graph[n_node].remove(leaf_node)
+                if len(graph[n_node]) == 1:
+                    new_leaf_nodes.append(n_node)
+            leaf_nodes = new_leaf_nodes
+        return leaf_nodes
+
