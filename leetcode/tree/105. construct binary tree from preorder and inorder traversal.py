@@ -19,3 +19,26 @@ class Solution:
 
             return node
 
+
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+class Solution2:
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+        # preorder란 무엇이냐? 어떤 트리를 탐색할 때
+        # 전위순회의 첫번째 녀석은... 루트노드가 될 것이고.
+        # 중위순회는 그 노드기준으로 갈려진다.
+        if not inorder:
+            return
+
+        idx = inorder.index(preorder.pop(0))
+        node = TreeNode(inorder[idx])
+        node.left = self.buildTree(preorder, inorder[:idx])
+        node.right = self.buildTree(preorder, inorder[idx + 1:])
+        return node
+
+
