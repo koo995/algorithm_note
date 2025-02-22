@@ -214,6 +214,41 @@ def solution5():
     print(dfs(0, visited | 1 << start))
 
 
-solution5()
+# solution5()
 # 극단적인 케이스에 대해서 결국에 계산은 되지만 시간이 너무너무 많이 걸린다는 것이 문제였구나
 # 순환할수 없는 경우와 방문하지않은 경우는 분리를 해야 하는 거야
+
+
+def solution6():
+    def tsp(node, visited_state):
+        # 만약 모든 점을 방문했다면
+        if visited_state == (1 << N) - 1:
+            # 현재 위치에서 start로 갈수있냐?
+            if board[node][start] != 0:
+                return board[node][start]
+            elif board[node][start] == 0:
+                return INF
+
+        # 현재상태를 가지고 방문한 적이 있으면 그 값을 넘겨준다. 만약 길이 없다면? INF가 넘겨지겠지..
+        if dp[node][visited_state] != -1:
+            return dp[node][visited_state]
+
+        # 최소비교를 해야하는데 기존에 -1값이 있으면 비교를 할 수 없다..
+        dp[node][visited_state] = INF
+        for n_node in range(N):
+            # 다음 길로 갈 수 없으면 못간다.
+            if board[node][n_node] == 0 or visited_state & (1 << n_node) != 0:
+                continue
+            dp[node][visited_state] = min(dp[node][visited_state], tsp(n_node, visited_state | 1 << n_node) + board[node][n_node])
+
+        return dp[node][visited_state]
+
+    N = int(input())
+    board = [list(map(int, input().split())) for _ in range(N)]
+
+    INF = int(1e9)
+    start = 0
+    dp = [[-1] * (1 << N) for _ in range(N)]  # 방문 상태는 몇개가 될 수 있지?
+    print(tsp(start, 1 << start))
+
+solution6()
