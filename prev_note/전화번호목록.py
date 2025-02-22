@@ -51,3 +51,23 @@ def solution3(phone_book: list):
             return False
         start += 1
     return True
+
+
+# 이 코드 테스트케이스 13번하나 틀린다...왜 그렇지?
+def solution4(phoneBook):
+    phoneBook.sort()
+    N = len(phoneBook)
+    for i in range(N - 1):
+        if phoneBook[i] in phoneBook[i + 1]:
+            return False
+    return True
+
+
+# 이 코드가 제일 낫다.
+def solution5(phoneBook):
+    phoneBook.sort()
+    N = len(phoneBook)
+    for i in range(N - 1):
+        if phoneBook[i + 1].startswith(phoneBook[i]):
+            return False
+    return True
