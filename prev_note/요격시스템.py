@@ -14,3 +14,23 @@ def solution(targets):
                 e = n_e
     return cnt
 
+
+def solution2(targets):
+    # 일단... 개구간은 요격할 수 없다.
+    targets.sort()
+    s = targets[0][0]
+    e = targets[0][1]
+    count = 1
+    for target in targets[1:]:
+        if target[0] < e:
+            s = target[0]
+            if target[1] < e:
+                e = target[1]
+        elif target[0] >= e:
+            count += 1
+            s = target[0]
+            e = target[1]
+    return count
+
+
+
