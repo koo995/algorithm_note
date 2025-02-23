@@ -105,6 +105,45 @@ def solution3():
 
 
 
-solution3()
 # 흐음.... 왜 에러가 안들어가는 것일까??
 # 헐? arr = "[]" 인 경우... arr[1:-1].split(",") -> [''] 이런 결과가 나온다고....? 왜,,,?
+
+
+def solution4():
+    from collections import deque
+
+    T = int(input())
+    for _ in range(T):
+        functions = input()
+        n = int(input())
+
+        arr = deque()
+        arr_in = input()[1:-1]
+        if arr_in:
+            arr = deque(map(int, arr_in.split(",")))
+        else:
+            arr = []
+
+
+
+        R_flag = False
+        error_flag = False
+        for func in functions:
+            if func == "R":
+                R_flag = not R_flag
+            else:  # func == "D"
+                if not arr:
+                    error_flag = True
+                    break
+                if R_flag:
+                    arr.pop()
+                else:
+                    arr.popleft()
+        if error_flag:
+            print("error")
+            continue
+        arr = list(arr)
+        print(arr[::-1] if R_flag else arr)
+
+
+solution4()
