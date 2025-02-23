@@ -89,3 +89,37 @@ def solution2(board, skills):
             if board[r][c] + sum_affect[r][c] >= 1:
                 count += 1
     return count
+
+
+def solution3(board, skills):
+    N, M = len(board), len(board[0])
+    prefix_sum = [[0] * (M + 1) for _ in range(N + 1)]
+
+    for typ, y1, x1, y2, x2, degree in skills:
+        prefix_sum[y1][x1] -= degree if typ == 1 else -1 * degree
+        prefix_sum[y1][x2 + 1] += degree if typ == 1 else -1 * degree
+        prefix_sum[y2 + 1][x1] += degree if typ == 1 else -1 * degree
+        prefix_sum[y2 + 1][x2 + 1] -= degree if typ == 1 else -1 * degree
+
+    # 자 이제 오른쪽으로 모두 누적합을 수행하자.
+    for i in range(N + 1):
+        for j in range(1, M + 1):
+            prefix_sum[i][j] += prefix_sum[i][j - 1]
+    # 자 이제 아래로 모두 누적합을 수행하자.
+    for j in range(M + 1):
+        for i in range(1, N + 1):
+            prefix_sum[i][j] += prefix_sum[i - 1][j]
+
+    # 이걸 이제 board에 더한다.
+    count = 0
+    for i in range(N):
+        for j in range(M):
+            board[i][j] += prefix_sum[i][j]
+            if board[i][j] > 0:
+                count += 1
+    return count
+
+
+
+
+
