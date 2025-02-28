@@ -168,3 +168,21 @@ def solution4(cur_fatigue, dungeons):
 
 # 어라? 틀리는 이유가 뭐지? current_k - consume_k을 해야하는데 k - ~로 해버렸네...
 # 그나저나 solution2의 틀리는 이유가 뭐지? 제발 파악하자.
+
+
+def solution2(cur_fatigue, dungeons):
+    n = len(dungeons)
+
+    def dfs(fatigue, visited):
+        max_clear = 0
+        for i, (required, cost) in enumerate(dungeons):
+            # 아직 방문하지 않았고, 현재 피로도가 요구치 이상일 경우만 방문 가능
+            if not (visited & (1 << i)) and fatigue >= required:
+                # i번 던전을 방문한 후 가능한 최대 방문 수 갱신
+                max_clear = max(
+                    max_clear,
+                    1 + dfs(fatigue - cost, visited | (1 << i))
+                )
+        return max_clear
+
+    return dfs(cur_fatigue, 0)
