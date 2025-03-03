@@ -73,6 +73,32 @@ class Solution:
         return water
 
 
+class Solution2:
+    def trap(self, arr: List[int]) -> int:
+        n = len(arr)
+        if n == 0:
+            return 0
+
+        # 왼쪽에서부터의 최대 높이 배열
+        lmax = [0] * n
+        lmax[0] = arr[0]
+        for i in range(1, n):
+            lmax[i] = max(lmax[i - 1], arr[i])
+
+        # 오른쪽에서부터의 최대 높이 배열
+        rmax = [0] * n
+        rmax[n - 1] = arr[n - 1]
+        for i in range(n - 2, -1, -1):
+            rmax[i] = max(rmax[i + 1], arr[i])
+
+        # 고인 물 계산
+        ans = 0
+        for i in range(n):
+            ans += min(lmax[i], rmax[i]) - arr[i]
+
+        return ans
+
+
 sol = Solution()
 sol.trap1([4, 2, 0, 3, 2, 5])
 # [0, 1, 1, 2, 2, 2, 2, 3, 3, 2, 2, 1]
