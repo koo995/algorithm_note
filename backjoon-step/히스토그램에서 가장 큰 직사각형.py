@@ -131,3 +131,29 @@ def solution4():
             max_area = max(max_area, h * (n - index))
 
         print(max_area)
+
+def solution5():
+    while 1:
+        i = input()
+        if i == "0":
+            break
+
+        max_rect = 0
+        N, *heights = map(int, i.split())  # packing을 이렇게 쓸 수 있지..
+        stack = []
+        for idx, h in enumerate(heights):
+            start = idx
+            while stack and stack[-1][1] > h:
+                i, height = stack.pop()
+                max_rect = max(max_rect, height * (idx - i))
+                start = i
+            stack.append((start, h))
+
+        while stack:
+            # stack안에 있는 높이로 최대확장해서 만들수있는 넓이는?
+            i, height = stack.pop()
+            max_rect = max(max_rect, height * (N - i))
+        print(max_rect)
+
+
+solution5()
