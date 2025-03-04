@@ -136,5 +136,33 @@ def solution4():
     print(ans)
 
 
-solution3()
+def solution5():
+    from collections import deque
 
+    N = int(input())  # 이 값이 최대의 수
+    M = int(input())
+    numbers = list(map(int, input().split()))
+
+    bin_N_size = len(bin(N)) - 2
+
+    seen = set()
+    max_length = 0
+    q = deque()
+    for num in numbers:
+        q.append((num, 0))
+        seen.add(num)
+
+    while q:
+        num, dist = q.popleft()
+        max_length = max(max_length, dist)
+
+        for i in range(bin_N_size):
+            next_num = num ^ (1 << i)
+            # 보았던 수면 건너뛰고... N보다 큰 경우도 건너뛴다.
+            if next_num in seen or next_num > N:
+                continue
+            seen.add(next_num)
+            q.append((next_num, dist + 1))
+    print(max_length)
+
+solution5()
