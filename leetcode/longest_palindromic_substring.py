@@ -61,3 +61,32 @@ class Solution:
             results.append(get_even_palind(idx))
         results.sort(key=lambda result:len(result), reverse=True)
         return results[0]
+
+
+class Solution2:
+    def longestPalindrome(self, s: str) -> str:
+
+        max_len = 0
+        max_value = ""
+
+        for i in range(len(s)):
+            start = i
+            end = i
+            start2 = i
+            end2 = i + 1
+            while 0 <= start and end < len(s) and s[start] == s[end]:
+                if end - start + 1 > max_len:
+                    max_len = end - start + 1
+                    max_value = s[start:end + 1]
+                start -= 1
+                end += 1
+
+            while 0 <= start2 and end2 < len(s) and s[start2] == s[end2]:
+                if end2 - start2 + 1 > max_len:
+                    max_len = end2 - start2 + 1
+                    max_value = s[start2:end2 + 1]
+                start2 -= 1
+                end2 += 1
+        return max_value
+
+
