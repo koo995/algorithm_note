@@ -64,4 +64,53 @@ def solution2(m, n, board):
     return count
 
 
+def solution3(m, n, board):
+    def check(board):
+        indices = set()
+        for i in range(len(board) - 1):
+            for j in range(len(board[0]) - 1):
+                if 0 != board[i][j] == board[i][j + 1] == board[i + 1][j] == board[i + 1][j + 1]:
+                    indices.add((i, j))
+                    indices.add((i, j + 1))
+                    indices.add((i + 1, j))
+                    indices.add((i + 1, j + 1))
+        return indices
+
+    def renew_board(board, indices):
+        new_board = [[] for _ in range(len(board))]
+        for i in range(len(board)):
+            zero_count = 0
+            for j in range(len(board[0])):
+                if (i, j) in indices:
+                    zero_count += 1
+                    continue
+                new_board[i].append(board[i][j])
+            while zero_count != 0:
+                new_board[i].append(0)
+                zero_count -= 1
+
+        return new_board
+
+    temp_board = [[] for _ in range(n)]
+
+    for j in range(n):
+        for i in reversed(range(m)):
+            temp_board[j].append(board[i][j])
+
+    # board을 회전하여 스택에 넣었다.
+    board = temp_board  # 크기는 n * m이 되었다.
+
+    count = 0
+    while 1:
+        remove_indices = check(board)
+        # 제거해야할 곳이 없다면...
+        if not remove_indices:
+            break
+        count += len(remove_indices)
+        board = renew_board(board, remove_indices)
+
+    return count
+
+
+
 
