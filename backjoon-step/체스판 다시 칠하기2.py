@@ -129,4 +129,48 @@ def solution3():
 
     print(min_result)
 
-solution3()
+def solution4():
+    N, M, K = map(int, input().split())
+    board = [input() for _ in range(N)]
+
+    white_board = [["W" if (i + j) % 2 == 0 else "B" for j in range(M) ] for i in range(N)]
+    black_board = [["B" if (i + j) % 2 == 0 else "W" for j in range(M)] for i in range(N)]
+
+    white_board_diff = [[0 for _ in range(M)] for _ in range(N)]
+    black_board_diff = [[0 for _ in range(M)] for _ in range(N)]
+
+    for i in range(N):
+        for j in range(M):
+            if board[i][j] != white_board[i][j]:
+                white_board_diff[i][j] = 1
+            if board[i][j] != black_board[i][j]:
+                black_board_diff[i][j] = 1
+
+    white_board_diff_sum = [[0] * M for _ in range(N)]
+    black_board_diff_sum = [[0] * M for _ in range(N)]
+
+    # 먼저 가로 합을 모두 구한다.
+    for i in range(N):
+        for j in range(M):
+            white_board_diff_sum[i][j] = (white_board_diff_sum[i][j - 1] if j - 1 >= 0 else 0) + white_board_diff[i][j]
+            black_board_diff_sum[i][j] = (black_board_diff_sum[i][j - 1] if j - 1 >= 0 else 0) + black_board_diff[i][j]
+    # 이제 새로 합을 구한다.
+    for j in range(M):
+        for i in range(N):
+            white_board_diff_sum[i][j] = (white_board_diff_sum[i - 1][j] if i - 1 >= 0 else 0) + white_board_diff_sum[i][j]
+            black_board_diff_sum[i][j] = (black_board_diff_sum[i - 1][j] if i - 1 >= 0 else 0) + black_board_diff_sum[i][j]
+
+    min_result = int(1e8)
+    for i in range(K - 1, N):
+        for j in range(K - 1, M):
+            a_result = white_board_diff_sum[i][j] - (white_board_diff_sum[i][j - K] if j - K >= 0 else 0) \
+                       - (white_board_diff_sum[i - K][j] if i - K >= 0 else 0) \
+                       + (white_board_diff_sum[i - K][j - K] if i - K >= 0 and j - K >= 0 else 0)
+            b_result = black_board_diff_sum[i][j] - (black_board_diff_sum[i][j - K] if j - K >= 0 else 0) \
+                       - (black_board_diff_sum[i - K][j] if i - K >= 0 else 0) \
+                       + (black_board_diff_sum[i - K][j - K] if i - K >= 0 and j - K >= 0 else 0)
+            min_result = min(min_result, a_result, b_result)
+    print(min_result)
+
+
+solution4()
