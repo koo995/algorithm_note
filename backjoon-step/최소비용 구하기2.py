@@ -78,7 +78,45 @@ def solution2():
         point = prev_node
     print(prev_path)
 
+def solution3():
+    import heapq
+
+    n = int(input())
+    m = int(input())
+    bus_lines = [list(map(int, input().split())) for _ in range(m)]
+    start, dest = map(int, input().split())
+
+    graph = [[] for _ in range(n + 1)]
+    for s, e, c in bus_lines:
+        graph[s].append((e, c))
+    # 이제부터 start에서 dest까지 최소비용으로 가기위한 것은?
+
+    INF = int(1e9)
+    dp = [INF] * (n + 1)
+    h = []
+    prev_node = [i for i in range(n + 1)]
+    heapq.heappush(h, (0, start))
+    dp[start] = 0
+    while h:
+        dist, node = heapq.heappop(h)
+        if dp[node] < dist:
+            continue
+        for n_node, cost in graph[node]:
+            if dp[n_node] > dist + cost:
+                prev_node[n_node] = node
+                dp[n_node] = dist + cost
+                heapq.heappush(h, (dp[n_node], n_node))
+
+    print(dp[dest])
+    # 자 이제 경로 복원을 하자.
+    paths = [dest]
+    now = dest
+    while now != prev_node[now]:
+        prev = prev_node[now]
+        paths.append(prev)
+        now = prev
+    print(len(paths))
+    print(*paths[::-1])
 
 
-
-solution2()
+solution3()
