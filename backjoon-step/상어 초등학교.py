@@ -215,6 +215,59 @@ def solution3():
 
     print(result)
 
+def solution4():
+    def get_empty_places(my_friends):
+        result = []
+        for y in range(N):
+            for x in range(N):
+                # 자 이제 비어있는 (i, j)에서 주위의 칸을 탐색해야한다.
+                if board[y][x] != 0:
+                    continue
+                f_count, e_count = 0, 0
+                for i in range(4):
+                    n_y, n_x = y + dy[i], x + dx[i]
+                    if not (0 <= n_y < N and 0 <= n_x < N):
+                        continue
+                    if board[n_y][n_x] == 0:
+                        e_count += 1
+                    if board[n_y][n_x] in my_friends:
+                        f_count += 1
+                result.append((f_count, e_count, y, x))
+        return result
+
+    N = int(input())
+    friends = {a: {b, c, d, e} for a, b, c, d, e in (map(int, input().split()) for _ in range(N * N))}
+    dy, dx = [0, 0, -1, 1], [1, -1, 0, 0]
+    board = [[0] * N for _ in range(N)]
+    for student in friends.keys():
+        empty_places = get_empty_places(friends[student])
+        empty_places.sort(key=lambda x: (-x[0], -x[1], x[2], x[3]))
+        _, _, y, x = empty_places[0]
+        board[y][x] = student
+    # 이제 만족도를 구해야한다.
+    total_satisfy_point = 0
+    for y in range(N):
+        for x in range(N):
+            s = board[y][x]
+            # 이제 s주위에 친구가 몇명 있는지 확인한다.
+            f_count = 0
+            for i in range(4):
+                n_y, n_x = y + dy[i], x + dx[i]
+                if not (0 <= n_y < N and 0 <= n_x < N):
+                    continue
+                if board[n_y][n_x] in friends[s]:
+                    f_count += 1
+            satisfy_point = 0
+            if f_count == 1:
+                satisfy_point = 1
+            elif f_count == 2:
+                satisfy_point = 10
+            elif f_count == 3:
+                satisfy_point = 100
+            elif f_count == 4:
+                satisfy_point = 1000
+            total_satisfy_point += satisfy_point
+    print(total_satisfy_point)
 
 
-solution3()
+solution4()
