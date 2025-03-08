@@ -211,6 +211,115 @@ def solution2():
         # 아... 이러면 스택에다가 좌표를 기록하는 것이 맞나...?좌표를 기록할게 아니라... 구슬번호를 모두 집어넣고, 0이면 삭제를 해버리고 4개 연속되면 폭발시키고
         # 폭발 다 끝나면 업데이트하고 다시 board 에 써내려간다. 이게 맞는것같다.
 
+bead_1, bead_2, bead_3 = 0, 0, 0
+def solution3():
+    global bead_1, bead_2, bead_3
+
+    def execute_skill(d, s):
+        dy, dx = direction[d]
+        broken_beads = []
+        for ds in range(1, s + 1):
+            broken_beads.append((m_y + ds * dy, m_x + ds * dx))
+        return broken_beads
+
+    def move_and_explode(broken_beads):
+        global bead_1, bead_2, bead_3
+
+        # 자 여기서 회전하는 board에 대해서 스택을 만들어야하는데....
+        spin_direction = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+        spin_step = 0
+        spin_point = 0
+        n_y, n_x = m_y, m_x
+        flag = True
+        stack = []
+        while flag:
+            dy, dx = spin_direction[spin_point % 4]
+            next_step = spin_step // 2 + 1
+            for i in range(1, next_step + 1):
+                n_y, n_x = n_y + dy, n_x + dx
+                if board[n_y][n_x] == 0 or (n_y, n_x) == (0, 0):
+                    flag = False
+                    break
+                if (n_y, n_x) not in broken_beads:
+                    stack.append(board[n_y][n_x])
+            spin_point += 1
+            spin_step += 1
+        # 자 이제 파괴된 후 배열을 구했으니... 폭발을 하자.
+        while 1:
+            exploded_beads = get_seq_beads(stack)
+            if len(exploded_beads) == len(stack):
+                break
+            stack = exploded_beads
+        return stack
+
+    # 이코드... gpt도 별로였는데 내가짠 이게 훨씬 나은거 같다
+    def get_seq_beads(beads):
+        global bead_1, bead_2, bead_3
+
+        stack = []
+        i = 0
+        while i < len(beads):
+            count = 1
+            while i + count < len(beads) and beads[i] == beads[i + count]:
+                count += 1
+            if count < 4:
+                stack += beads[i:i + count]
+            else:  # 카운팅 할 것이 아니면 이건 필요없지
+                if beads[i] == 1:
+                    bead_1 += count
+                elif beads[i] == 2:
+                    bead_2 += count
+                elif beads[i] == 3:
+                    bead_3 += count
+            i += count
+        return stack
+
+    def update_board(beads):
+        # 이제 bead을 변화시키자.
+        stack = []
+        i = 0
+        while i < len(beads):
+            count = 1
+            while i + count < len(beads) and beads[i] == beads[i + count]:
+                count += 1
+            stack += [count, beads[i]]
+            i += count
+
+        # 이제 변화된 구슬들을 board에 넣어야한다.
+        spin_direction = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+        spin_step = 0
+        spin_point = 0
+        n_y, n_x = m_y, m_x
+        flag = True
+        stack = stack[::-1]
+        while flag:
+            dy, dx = spin_direction[spin_point % 4]
+            next_step = spin_step // 2 + 1
+            for i in range(1, next_step + 1):
+                n_y, n_x = n_y + dy, n_x + dx
+                if stack:
+                    board[n_y][n_x] = stack.pop()
+                else:
+                    board[n_y][n_x] = 0
+                if (n_y, n_x) == (0, 0):
+                    flag = False
+                    break
+            spin_point += 1
+            spin_step += 1
+
+    N, M = map(int, input().split())
+    board = [list(map(int, input().split())) for _ in range(N)]
+    skills = [list(map(int, input().split())) for _ in range(M)]
+    direction = {1:(-1, 0), 2:(1, 0), 3:(0, -1), 4:(0, 1)}
+    m_y, m_x = ((N + 1) // 2) - 1, ((N + 1) // 2) - 1
+
+    for d, s in skills:
+        broken_beads = execute_skill(d, s)
+        new_bead_array = move_and_explode(broken_beads)
+        update_board(new_bead_array)
+
+    print(1 * bead_1 + 2 * bead_2 + 3 * bead_3)
 
 
-solution2()
+    pass
+solution3()
