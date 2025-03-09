@@ -49,4 +49,28 @@ def solution2():
         get_prime(test)
     pass
 
-solution2()
+def solution3():
+    def check_prime(n):
+        # 이녀석이 소수인지 어떻게하지?
+        # 약수들 중에서...
+        # n이 소수가 아니라면... 루트n이하에서 약수를 가진다.
+        if n == 0 or n == 1:
+            return False
+        if n == 2:
+            return True
+        for i in range(2, int(n ** 0.5) + 1):
+            if n % i == 0:
+                return False
+        return True
+
+    T = int(input())
+    for _ in range(T):
+        n = int(input())
+        # n보다 크거나 같은 소수를 구해야한다.
+        while 1:
+            if check_prime(n):
+                print(n)
+                break
+            n += 1
+
+solution3()
