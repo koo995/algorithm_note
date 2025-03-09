@@ -134,3 +134,39 @@ def solution(u_ids, b_ids):
     dfs(0, [])
     print(results)
     return len(results)
+
+
+def solution2(user_id_lst, banned_id_lst):
+    def match(banned_id, user_id):
+        # 어쨋든 각 아이디의 길이는 최대 8이다.
+        if len(banned_id) != len(user_id):
+            return False
+        for i in range(len(banned_id)):
+            if banned_id[i] == "*":
+                continue
+            if banned_id[i] != user_id[i]:
+                return False
+        return True
+
+    def check_lst(banned_ids, user_ids):
+        # 2개의 리스트가 매칭되냐 안되냐?
+
+        N = len(banned_ids)
+        for i in range(N):
+            banned_id = banned_ids[i]
+            user_id = user_ids[i]
+            if not match(banned_id, user_id):
+                return False
+        return True
+    from itertools import combinations, permutations
+
+    # 몇가지 경우의 수가 가능한지 리턴해야한다.
+    # 하나의 banned_id에 *은 1개 이상 있을 수 있다.
+
+    answer = 0
+    for user_ids in combinations(user_id_lst, len(banned_id_lst)):  # 이거 최대 70임
+        for user_ids_ in permutations(user_ids, len(user_ids)):
+            if check_lst(banned_id_lst, user_ids_):
+                answer += 1
+                break
+    return answer
