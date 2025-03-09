@@ -110,7 +110,56 @@ def solution3():
                 end -= 1
         print(count)
 
-solution3()
+def solution4():
+    def check_prime(n):
+        if n == 0 or n == 1:
+            return False
+        if n == 2:
+            return True
+        for i in range(2, int(n ** 0.5) + 1):
+            if n % 2 == 0:
+                return False
+        return True
+
+    is_prime = [1] * 1000001  # 먼저 기본적으로 모두 소수라고 가정하고 탐색하자.
+    for n in range(1000001):
+        if not is_prime[n]:
+            continue
+        if check_prime(n):
+            i = 2
+            while n * i < 1000001:
+                is_prime[n * i] = 0
+                i += 1
+        else:
+            is_prime[n] = 0
+    prime_nums = []
+    for i in range(1000001):
+        if is_prime[i]:
+            prime_nums.append(i)
+    prime_nums.sort()
+
+    T = int(input())
+    for _ in range(T):
+        N = int(input())
+        # 이제 N을 두개의 소수의 합으로 구해야하는데....
+        # 투 포인터를 이용할까?
+        s = 0
+        e = len(prime_nums) - 1
+        count = 0
+        while s <= e:
+            if prime_nums[s] + prime_nums[e] == N:
+                count += 1
+                s += 1
+                e -= 1
+            elif prime_nums[s] + prime_nums[e] < N:
+                s += 1
+            elif prime_nums[s] + prime_nums[e] > N:
+                e -= 1
+        print(count)
+    pass
+
+
+solution4()
 
 # 역시 그냥 이러한 풀이는 시간초과를 발생시키네...
 # 100만 까지 모든수에 대해서 프라임이냐 아니냐를 판단하는것은 너무 오래 걸린다.
