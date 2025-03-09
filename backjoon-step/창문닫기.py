@@ -9,4 +9,10 @@ def solution():
             break
         i += 1
 
-solution()
+def solution2():
+    import math
+    N = int(input())
+
+    print(int(math.sqrt(N)))
+
+solution2()
