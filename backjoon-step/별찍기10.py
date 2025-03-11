@@ -43,4 +43,32 @@ def solution2():
     for row in print_map:
         print("".join(row))
 
-solution2()
+
+def solution3():
+    def div_and_conquer(n):
+        if n == 3:
+            board[0][0:3] = board[2][0:3] = ["*", "*", "*"]
+            board[1][0:3] = ["*", " ", "*"]
+            return
+
+        div_and_conquer(n//3)
+        # 복사한다는 개념보단... 그냥 모두 그려?
+        size = n//3
+        for i in range(3):
+            for j in range(3):
+                if i == 1 and j == 1:
+                    continue
+                # 여기서 시작지점은?
+                for k in range(size):
+                    board[size * i + k][size * j:size * j + size] = board[k][:size]
+
+    N = int(input())
+    # 우선은 출력하게될 N*N의 board을 만든다.
+
+    board = [[" "] * N for _ in range(N)]
+    div_and_conquer(N)
+    for row in board:
+        print("".join(row))
+
+
+solution3()
