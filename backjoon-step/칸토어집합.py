@@ -50,5 +50,32 @@ def solution2():
         except:
             break
 
-solution2()
+def solution3():
+    def canto(n):
+        def div_and_conquer(n):
+            if n == 1:
+                board[0] = "-"
+                return
+
+            div_and_conquer(n // 3)
+            size = n // 3
+            for i in range(3):
+                if i == 1:
+                    continue
+                board[size * i:size * i + size] = board[:size]
+
+        num = pow(3, n)
+        board = [" "] * num
+        div_and_conquer(num)
+        print("".join(board))
+
+    while 1:
+        try:
+            num = int(input())
+            canto(num)
+        except:
+            break
+
+
+solution3()
 # 약간의 응용으로... "-" 이것을 쓰는 코드로 가보는것은 어떨까?
