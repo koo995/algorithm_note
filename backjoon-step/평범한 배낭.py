@@ -1,3 +1,6 @@
+from itertools import product
+
+
 def solution():
     N, K = map(int, input().split()) # 갯수, 최대 버틸수있는 무게 K
     objects = [tuple(map(int, input().split())) for _ in range(N)]
@@ -59,5 +62,22 @@ def solution3():
                                       dp[weight - 1][idx],
                                       dp[weight][idx - 1] if idx - 1 >= 0 else 0)
     print(max(dp[K]))
-    
-solution3()
+
+def solution4():
+    N, K = map(int, input().split())
+    products = [tuple(map(int, input().split())) for _ in range(N)]
+    products.sort()  # 무게를 기준으로 정렬한다.
+    dp = [[0] * N for _ in range(K + 1)]  # 여기는 value을 담는다.
+    for bag_max_weight in range(1, K + 1):
+        for i in range(N):
+            product_weight = products[i][0]
+            product_value = products[i][1]
+            if product_weight > bag_max_weight:
+                dp[bag_max_weight][i] = max(dp[bag_max_weight][i], dp[bag_max_weight][i - 1] if i - 1 >= 0 else 0)
+            elif product_weight <= bag_max_weight:
+                dp[bag_max_weight][i] = max(dp[bag_max_weight][i],
+                                            dp[bag_max_weight][i - 1] if i - 1 >= 0 else 0,
+                                            product_value + (dp[bag_max_weight - product_weight][i - 1] if i - 1 >= 0 else 0 ))
+    print(max(dp[K]))
+
+solution4()
