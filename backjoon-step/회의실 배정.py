@@ -33,4 +33,29 @@ def solution2():
         print(count)
     pass
 
-solution2()
+def solution3():
+    N = int(input())
+    meetings = [tuple(map(int, input().split())) for _ in range(N)]
+    meetings.sort(key=lambda meeting:(meeting[1], meeting[1] - meeting[0]))
+    start, end = meetings[0][0], meetings[0][1]
+    count = 1
+    if N == 1:
+        print(count)
+        exit()
+    print(meetings)
+    for meeting in meetings[1:]:
+        if meeting[0] >= end:
+            print(meeting)
+            count += 1
+            start = meeting[0]
+            end = meeting[1]
+    print(count)
+# 6
+# 1 100
+# 1 100
+# 2 2
+# 2 1
+# 1 2
+# 1 1
+# 해당 케이스의 결과는 4가 나와야하는데 2차기준을 길이로 하면 3이 나오는 구나?
+solution3()
