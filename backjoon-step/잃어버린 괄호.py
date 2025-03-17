@@ -51,6 +51,45 @@ def solution2():
             dp_min[i] = min(dp_min[i], dp_min[i - 1] - operands[i])
     print(dp_min[-1])
 
+def solution3():
+    i = input()
+    operands = []
+    operators = []
+    num = ""
+    for ch in i:
+        if not ch.isnumeric():
+            operators.append(ch)
+            operands.append(int(num))
+            num = ""
+            continue
+        num += ch
+    operands.append(int(num))
+
+    # 숫자와 연산자 분리
+    N = len(operands)
+
+    INF = int(1e9)
+    max_dp = [[-INF] * N for _ in range(N)]
+    min_dp = [[INF] * N for _ in range(N)]
+
+    # 먼저 step이 0인 경우를 초기화하자.
+    for i in range(N):
+        max_dp[i][i] = operands[i]
+        min_dp[i][i] = operands[i]
+
+    # 이제 step이 1인 경우부터 탐색을 하자.
+    for step in range(1, N):
+        for i in range(N - step):
+            j = i + step
+            for k in range(i, j):
+                if operators[k] == "+":
+                    max_dp[i][j] = max(max_dp[i][j], max_dp[i][k] + max_dp[k + 1][j])
+                    min_dp[i][j] = min(min_dp[i][j], min_dp[i][k] + min_dp[k + 1][j])
+                else:  # operands[k] == "-"
+                    max_dp[i][j] = max(max_dp[i][j], max_dp[i][k] - min_dp[k + 1][j])
+                    min_dp[i][j] = min(min_dp[i][j], min_dp[i][k] - max_dp[k + 1][j])
+    print(min_dp[0][N - 1])
+
 
         
-solution2()
+solution3()
