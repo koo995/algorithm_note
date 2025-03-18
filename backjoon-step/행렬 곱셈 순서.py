@@ -24,6 +24,7 @@
 #                 dp[i][j] = tmp
 #                 matrix_info[i][j] = (row1, col2)
 # print(dp[0][N - 1])
+from zmq.backend import second
 
 
 # 시간초과가 발생하였다...
@@ -51,4 +52,26 @@ def solution2():
                 matrix[i][j] = (matrix1[0], matrix2[1])
     print(dp[0][N - 1])
 
-solution2()
+def solution3():
+    N = int(input())
+    matrix_lst = [tuple(map(int, input().split())) for _ in range(N)]
+
+    INF = int(1e9)
+    dp = [[(INF, (0, 0))] * N for _ in range(N)]
+    for i in range(N):
+        dp[i][i] = (0, matrix_lst[i])
+
+    for step in range(1, N):
+        for i in range(N - step):
+            j = i + step
+            for k in range(i, j):
+                first_cost, first_matrix = dp[i][k]
+                second_cost, second_matrix = dp[k + 1][j]
+                cur_cost, _ = dp[i][j]
+                a, b, c = first_matrix[0], first_matrix[1], second_matrix[1]
+                if cur_cost > first_cost + second_cost + a * b * c:
+                    dp[i][j] = (first_cost + second_cost + a * b * c, (a, c))
+
+    print(dp[0][-1][0])
+
+solution3()
