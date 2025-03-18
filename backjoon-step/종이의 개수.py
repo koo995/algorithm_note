@@ -53,4 +53,47 @@ def solution2():
         paper_count[result] += 1
     print(paper_count[-1], paper_count[0], paper_count[1], sep="\n")
 
-solution2()
+
+minus_one_count = 0
+zero_count = 0
+one_count = 0
+def solution3():
+    global minus_one_count, zero_count, one_count
+
+    def check(size, y, x):
+        s = set()
+        for i in range(size):
+            for j in range(size):
+                s.add(matrix[y + i][x + j])
+        if len(s) == 1:
+            return True
+        else: return False
+
+    def dfs(size, y, x):
+        global minus_one_count, zero_count, one_count
+
+        if check(size, y, x):
+            number = matrix[y][x]
+            if number == 1:
+                one_count += 1
+            elif number == 0:
+                zero_count += 1
+            else:
+                minus_one_count += 1
+            return
+
+        next_size = size // 3
+        for i in range(3):
+            for j in range(3):
+                n_y = y + next_size * i
+                n_x = x + next_size * j
+                dfs(next_size, n_y, n_x)
+
+    N = int(input())
+    matrix = [list(map(int, input().split())) for _ in range(N)]  # 크기는 최대 478만이다.
+    dfs(N, 0, 0)
+    print(minus_one_count)
+    print(zero_count)
+    print(one_count)
+
+solution3()
