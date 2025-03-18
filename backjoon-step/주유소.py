@@ -39,4 +39,19 @@ def solution2():
             next_i += 1
     print(min_cost)
 
-solution2()
+def solution3():
+    N = int(input())  # 최대 10만개
+    roads = list(map(int, input().split()))
+    prices = list(map(int, input().split()))
+
+    cost = 0
+    min_price = prices[0]
+    for i in range(N - 1):
+        dist = roads[i]
+        price = prices[i]
+        if price < min_price:
+            min_price = price
+        cost += dist * min_price
+    print(cost)
+
+solution3()
