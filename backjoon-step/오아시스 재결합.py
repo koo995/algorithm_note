@@ -75,10 +75,90 @@ def solution3():
 
     print(visible_pairs)
 
+# 이분탐색을 넣었는데 시간초과가 걸렸다.
+# 기본적으로 최악인 50만 * log(50)
+def solution4():
+    from bisect import bisect_right
+    from collections import deque
+    import sys
+    def my_bisect_right(lst, num):
+        # 나는 이분탐색을 이용해서.. 감소하는 lst에서 num이 들어갈 위치를 찾는다.
+        s = 0
+        e = len(lst) - 1
+        while s + 1 < e:
+            mid = (s + e) // 2
+            if lst[mid] > num:
+                s = mid
+            else:
+                e = mid
+        return s
 
-solution2()
+    print(my_bisect_right([6, 5, 4, 4, 4, 3, 2, 1], 3))
+    print(my_bisect_right([6, 5, 4, 4, 4, 3, 2, 1], 4))
+    print(my_bisect_right([6, 5, 4, 4, 4, 3, 2, 1], 5))
+    print(my_bisect_right([6, 5, 4, 4, 4, 3, 2, 1], 7))
 
-solution3()
+
+    input = sys.stdin.readline
+
+    N: int = int(input())
+
+    # 키는 서있는 순서대로 주어진다.
+    heights: list[int] = [int(input()) for _ in range(N)]
+
+    q: deque = deque()  # 이것은 하향하는 스택이다.
+    answer: int = 0
+    for b_height in heights:
+        # 먼저 볼 수 있는 녀석들의 갯수를 구한다.
+        if q:
+            idx = bisect_right(q, b_height)
+            answer += (idx + 1) if idx < len(q) else idx
+
+        # q는 우상향하도록 만든다.
+        while q and q[0] < b_height:
+            q.popleft()
+        q.appendleft(b_height)
+
+    print(answer)
+
+
+def solution5():
+    import sys
+    input = sys.stdin.readline
+
+    def my_bisect(lst, num):
+        # 나는 이분탐색을 이용해서.. 감소하는 lst에서 num이 들어갈 위치를 찾는다.
+        s = 0
+        e = len(lst)
+        while s + 1 < e:
+            mid = (s + e) // 2
+            if lst[mid] > num:
+                s = mid
+            else:
+                e = mid
+        return s
+
+    N: int = int(input())
+
+    # 키는 서있는 순서대로 주어진다.
+    heights: list[int] = [int(input()) for _ in range(N)]
+
+    stack = []  # 이것은 하향하는 스택이다.
+    answer = 0
+    for b_height in heights:
+        # 먼저 볼 수 있는 녀석들의 갯수를 구한다.
+        if stack:
+            idx = my_bisect(stack, b_height)
+            answer += len(stack) - idx
+
+        # q는 우상향하도록 만든다.
+        while stack and stack[-1] < b_height:
+            stack.pop()
+        stack.append(b_height)
+
+    print(answer)
+
+solution5()
 # 13 8877766777799 이 상황에서 틀린다.
 # 어떤 예외상황이 발생할 수 있을까?
 # stack 안에 있는 녀석들은 모두 쌍을 만들 수 있는거 아닐까
