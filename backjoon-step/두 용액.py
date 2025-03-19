@@ -58,4 +58,33 @@ def solution2():
 
     print(*answer_pair)
 
-solution2()
+def solution3():
+    N = int(input())
+    A = list(map(int, input().split()))
+
+    # 먼저 정렬을 한다.
+    A.sort()
+
+    s = 0
+    e = len(A) - 1
+
+    min_value = int(2e10)
+    min_pair = (A[s], A[e])
+    while s < e:
+        sum_value = A[s] + A[e]
+        if min_value > abs(sum_value):
+            min_value = abs(sum_value)
+            min_pair = (A[s], A[e])
+
+        if sum_value > 0:
+            # 줄이는 방향으로 가야지?
+            e -= 1
+        elif sum_value < 0:
+            s += 1
+        elif sum_value == 0:
+            # 이건 정답 별견이지.. 탐색끝내도된다.
+            s += 1
+            e -= 1
+    print(*min_pair)
+
+solution3()
