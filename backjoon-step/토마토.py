@@ -82,4 +82,41 @@ def solution2():
                 ripe_tomatoes.append((n_y, n_x, count + 1))
         return count if unripe_count == 0 else -1
 
-print(solution2())
+def solution3():
+    from collections import deque
+
+    M, N = map(int, input().split())  # 가로, 세로
+    tomato_box = [list(map(int, input().split())) for _ in range(N)]
+
+    ripe_tomatoes = []
+    for i in range(N):
+        for j in range(M):
+            if tomato_box[i][j] == 1:
+                ripe_tomatoes.append((i, j))
+
+    dy, dx = [1, -1, 0, 0], [0, 0, -1, 1]
+    q = deque()
+    for ripe_tomato in ripe_tomatoes:
+        q.append((ripe_tomato, 0))
+
+    answer_day = 0
+    while q:
+        tomato, day = q.popleft()
+        y, x = tomato
+        answer_day = max(answer_day, day)
+
+        for i in range(4):
+            ny, nx = y + dy[i], x + dx[i]
+
+            if not (0 <= ny < N and 0 <= nx < M) or tomato_box[ny][nx] != 0:
+                continue
+            tomato_box[ny][nx] = 1
+            q.append(((ny, nx), day + 1))
+    for i in range(N):
+        for j in range(M):
+            if tomato_box[i][j] == 0:
+                print(-1)
+                exit()
+    print(answer_day)
+
+solution3()
