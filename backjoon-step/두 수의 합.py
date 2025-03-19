@@ -73,8 +73,23 @@ def solution3():
 
     print(count)
 
-solution2()
+def solution4():
+    N = int(input())
+    A = list(map(int, input().split()))
+    X = int(input())
 
-
-
-solution2()
+    A.sort()
+    s = 0
+    e = len(A) - 1
+    count = 0
+    while s < e:
+        if A[s] + A[e] > X:
+            e -= 1
+        elif A[s] + A[e] < X:
+            s += 1
+        else:
+            count += 1
+            s += 1
+            e -= 1
+    print(count)
+solution4()
