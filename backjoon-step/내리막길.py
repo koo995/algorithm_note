@@ -64,6 +64,44 @@ def solution2():
     dfs(start)
     print(dp[0][0])
 
-solution2()
-#  결과론적으로 답이 있을것이다 라고 생각한 것이 문제구나?
-# 답이 없을 수 있다. 그러면 어떻게 처리할 것이냐?특정지점에서 답이 없다는 것을 체크해야하는데... 방문하지 않은 경우는 -1로... 방문한 경우는 답이 없는 0으로 하자.
+
+def solution3():
+    import sys
+    sys.setrecursionlimit(10000)
+
+    def dfs(y, x):
+        # 목적지에 도착했다면 카운팅한다
+        if (y, x) == (N - 1, M - 1):
+            dp[y][x] = 1
+            return dp[y][x]  # 사실상 1이 반환되겠지만
+
+        # 또는 이미 방문해서 결과를 아는 지점에 대해서 그 결과를 반환한다.
+        # 갈 수 있는 길의 갯수는 몇개인지 저장한다.
+        if dp[y][x] != -1:
+            return dp[y][x]
+
+        dfs_result = 0
+        for i in range(4):
+            ny, nx = y + dy[i], x + dx[i]
+            # 우선 범위를 벗어나거나... 방문한 녀석이라면 탐색하지 않는다. 그리고 내리막길이 아니면 탐색하지 않는다.
+            if not (0 <= ny < N and 0 <= nx < M) or visited[ny][nx] == 1 or board[y][x] <= board[ny][nx]:
+                continue
+            visited[ny][nx] = 1
+            # 만약 여기서 한 방향이라도 목적지까지 도착한다면... 여기 이 노드에선 반드시 목적지까지 도착할 여지가 있다는 것이다.
+            dfs_result += dfs(ny, nx)  # or 연산을 통해서 True가 하나라도 있다면 무조건 True로 만든다.
+            visited[ny][nx] = 0
+
+        dp[y][x] = dfs_result
+        # 만약 더이상 갈 곳이 없다면?
+        return dfs_result
+
+    N, M = map(int, input().split())
+    board = [list(map(int, input().split())) for _ in range(N)]
+
+    dy, dx = [1, 0, -1, 0], [0, 1, 0, -1]
+
+    visited = [[0] * M for _ in range(N)]
+    dp = [[-1] * M for _ in range(N)]  # 이 값은 목적지 까지 도착할 수 있는 길의 갯수를 표현한다.
+    print(dfs(0, 0))
+
+solution3()
