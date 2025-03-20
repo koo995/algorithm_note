@@ -69,4 +69,40 @@ def solution2():
                 q.append((n_y, n_x, broken))
     print(-1)
 
-solution2()
+def solution3():
+    from collections import deque
+
+    N, M = map(int, input().split())
+    board = [list(map(int, list(input()))) for _ in range(N)]
+    dy, dx = [1, -1, 0, 0], [0, 0, 1, -1]
+    dp = {broken: [[-1] * M for _ in range(N)] for broken in [False, True]}  # 0은 벽을 부수지 않고 도착. 1은 벽을 부수고 도착. dp에서 visited을 대체해도 될 듯 하다
+    start, end = (0, 0), (N - 1, M - 1)
+    q = deque()
+    q.append((start, 1, False))
+    dp[False][0][0] = 1
+
+    while q:
+        node, dist, break_down = q.popleft()
+        if node == end:
+            print(dist)
+            exit()
+
+        y, x = node
+        for i in range(4):
+            ny, nx = y + dy[i], x + dx[i]
+
+            # 범위를 벗어나면 건너뛴다.
+            if not (0 <= ny < N and 0 <= nx < M):
+                continue
+
+            if board[ny][nx] == 0 and dp[break_down][ny][nx] == -1:
+                dp[break_down][ny][nx] = dist + 1
+                q.append(((ny, nx), dist + 1, break_down))
+
+            # 예외적으로 깨부수지 않았다면.. 벽도 탐색가능하다. 그리고 기본적으로 0만 탐색 가능하다.
+            elif break_down == False and board[ny][nx] == 1 and dp[True][ny][nx] == -1:
+                dp[True][ny][nx] = dist + 1
+                q.append(((ny, nx), dist + 1, True))
+    print(-1)
+
+solution3()
