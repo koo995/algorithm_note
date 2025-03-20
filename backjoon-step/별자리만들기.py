@@ -88,7 +88,48 @@ def solution3():
             cost += dist
     print(cost)
 
-solution3()
+
+def solution4():
+    from itertools import combinations
+    import math
+
+    def calc_dist(a, b):
+        return round(math.sqrt(pow(a[0] - b[0], 2) + pow(a[1] - b[1], 2)), 2)
+
+    def find_parend(node):
+        if node == parent[node]:
+            return node
+        parent[node] = find_parend(parent[node])
+        return parent[node]
+
+    def union(a, b):
+        pa = find_parend(a)
+        pb = find_parend(b)
+        if pa == pb:
+            return False
+        else:
+            if pa > pb:
+                parent[pa] = pb
+            else:
+                parent[pb] = pa
+            return True
+
+    n = int(input())
+    stars = [list(map(float, input().split())) for _ in range(n)]
+
+    star_pair = [(calc_dist(stars[idx1], stars[idx2]), idx1, idx2) for idx1, idx2 in combinations(range(n), 2)]
+    star_pair.sort()
+
+    parent = [i for i in range(n)]
+    total_cost = 0
+    for cost, star1, star2 in star_pair:
+        # 비용이 낮은 순서로 계속 집합에 추가해나간다.
+        if union(star1, star2):
+            total_cost += cost
+    print(total_cost)
+
+
+solution4()
 
 
 # 모든 거리를 구하는 것 4950 밖에 안하니까 할만하다.
