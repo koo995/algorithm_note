@@ -66,7 +66,28 @@ def solution3():
     # min_length가 업데이트되지 않은 경우, 부분 수열의 합이 S 이상인 경우가 없음
     print(min_length if min_length != float('inf') else 0)
 
-solution2()
+def solution4():
+    N, S = map(int, input().split())
+    A = list(map(int, input().split()))
 
+    # 누적합을 구한다.
+    prefix_sum_A = [0] * len(A)
+    prefix_sum_A[0] = A[0]
+    for i in range(1, len(A)):
+        prefix_sum_A[i] = prefix_sum_A[i - 1] + A[i]
 
-solution2()
+    # 투 포인터를 이용해 연속적인 수들을 관찰한다.
+    # 이런 것은 슬라이딩 윈도우라고 표현해야하나?
+    s, e = 0, 0
+    INF = int(1e9)
+    min_length = INF
+    while 0 <= s <= e < N:
+        continuous_sum = prefix_sum_A[e] - (prefix_sum_A[s - 1] if s - 1 >= 0 else 0)
+        if continuous_sum >= S:
+            min_length = min(min_length, e - s + 1)
+            s += 1
+        elif continuous_sum < S:
+            e += 1
+    print(min_length if min_length != INF else 0)
+
+solution4()
