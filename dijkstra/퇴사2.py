@@ -43,4 +43,20 @@ def solution2():
             dp[i] = dp[i + 1]
     print(dp[0])
 
-solution()
+# 이번 풀이는 바텀업 풀이다.
+def solution3():
+    N = int(input())
+    meetings = [list(map(int, input().split())) for _ in range(N)]
+    dp = [0] * (N + 1)  # 어쨋든 처음에 얻을 수 있는 수익은 0이다.
+
+    for i in range(N - 1, -1, -1):
+        # i날짜에 얻을 수 있는 금액은?
+        t, p = meetings[i]
+        if i + t <= N:
+            dp[i] = max(dp[i + t] + p, dp[i + 1])  # 선택한 경우와 선택하지 않은 경우를 비교한다.
+        else:
+            dp[i] = dp[i + 1]
+
+    print(dp[0])
+
+solution3()
